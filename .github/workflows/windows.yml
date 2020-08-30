@@ -30,8 +30,7 @@ jobs:
         mkdir build
         cd build
         cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12"
-        ls
-        make
+        cmake --build .
 
     # Only create artifact on a push to master
     # - if: github.event_name == 'push' 
