@@ -43,6 +43,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.FILENAME }}
+        name: lvgl_example_winx86_64
         path: |
-          lvgl_example.exe
+          example/build/lvgl_example.exe
+          C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/bin/SDL2.dll
