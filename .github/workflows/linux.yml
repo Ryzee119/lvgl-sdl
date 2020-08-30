@@ -1,0 +1,38 @@
+name: Linux
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Install and Setup Dependencies
+      run: |
+        sudo apt install libsdl2-dev
+
+    - name: Compile
+      run: |
+        cd example/
+        mkdir build
+        cd build
+        cmake ..
+        make
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: lvgl_example_linux
+        path: |
+          example/build/lvgl_example
