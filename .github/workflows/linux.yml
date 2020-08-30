@@ -1,4 +1,4 @@
-name: Build
+name: Linux
 
 on:
   pull_request:
@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+      with:
+        recursive: true
 
     - name: Install and Setup Dependencies
       run: |
