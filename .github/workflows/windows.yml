@@ -30,7 +30,7 @@ jobs:
         mkdir build
         cd build
         ls c:/tools/
-        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12" -G "MinGW Makefiles"
+        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
         cmake --build .
 
     # Only create artifact on a push to master
