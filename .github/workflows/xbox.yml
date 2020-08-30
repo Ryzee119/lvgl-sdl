@@ -1,0 +1,39 @@
+name: Xbox
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Xbox:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install and Setup Dependencies
+      run: |
+        sudo apt-get update -y && sudo apt-get install -y flex bison clang lld
+        cd ~
+        git clone https://github.com/XboxDev/nxdk.git --recursive
+ 
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Compile
+      run: |
+        export PATH=$PATH:/usr/lib/llvm-6.0/bin
+        cd example/
+        make -f Makefile.nxdk -j$(nproc) NXDK_DIR=~/nxdk
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: lvgl_example_ogxbox
+        path: |
+          example/lvgl-xbox.iso
+          example/bin

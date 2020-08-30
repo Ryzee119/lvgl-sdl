@@ -1,0 +1,6 @@
+[submodule "lvgl"]
+	path = lvgl
+	url = https://github.com/lvgl/lvgl.git
+[submodule "example/lv_examples"]
+	path = example/lv_examples
+	url = https://github.com/lvgl/lv_examples.git
