@@ -1,0 +1,8 @@
+bin
+build
+CMakeFiles
+CMakeCache.txt
+*.d
+*.obj
+*.exe
+*.iso
