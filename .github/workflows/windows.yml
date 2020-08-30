@@ -23,17 +23,20 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
         7z x -y sdl2.tar.gz
-        ls
         7z x -y sdl2.tar "-oC:\tools\"
+        
+        #Create output filename
+        export FILENAME=lvgl_example_$(date -u +'%Y%m%d%H%M')
+        echo "::set-env name=FILENAME::$FILENAME"
 
     - name: Compile
       run: |
         cd example/
         mkdir build
         cd build
-        ls c:/tools/SDL2-2.0.12
         cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
         cmake --build .
+        ls
 
     # Only create artifact on a push to master
     # - if: github.event_name == 'push' 
