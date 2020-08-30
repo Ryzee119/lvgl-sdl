@@ -1,0 +1,48 @@
+name: Windows
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Windows:
+    env:
+      FILENAME: 0
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+    
+    - name: Setup mysys2
+      uses: msys2/setup-msys2@v2
+
+    - name: Install and Setup Dependencies 
+      shell: msys2 {0}
+      run: |
+        pacman -S git mingw-w64-x86_64-toolchain mingw64/mingw-w64-x86_64-SDL2
+        pacman -S mingw64/mingw-w64-x86_64-cmake make
+
+    - name: Compile
+      shell: msys2 {0}
+      run: |
+        cd `$GITHUB_WORKSPACE
+        cd example/
+        mkdir build
+        cd build
+        cmake ..
+        make     
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.FILENAME }}
+        path: |
+          lvgl_example.exe
