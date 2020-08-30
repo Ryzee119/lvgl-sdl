@@ -31,8 +31,6 @@ jobs:
     - name: Compile
       shell: msys2 {0}
       run: |
-        ls
-        cd D:\a\nxdk-lvgl\nxdk-lvgl
         cd example/
         mkdir build
         cd build
