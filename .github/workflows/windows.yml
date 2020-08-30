@@ -34,7 +34,7 @@ jobs:
         cd example/
         mkdir build
         cd build
-        cmake ..
+        cmake .. -G "MinGW Makefiles"
         make     
 
     # Only create artifact on a push to master
