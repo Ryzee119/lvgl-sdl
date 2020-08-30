@@ -21,15 +21,16 @@ jobs:
 
     - name: Install and Setup Dependencies 
       run: |
-        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip" -OutFile "sdl2.zip"
-        7z x -y sdl2.zip "-oC:\tools\"
+        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.zip"
+        7z xzvf -y sdl2.zip "-oC:\tools\"
 
     - name: Compile
       run: |
         cd example/
         mkdir build
         cd build
-        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12"
+        ls c:/tools/
+        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12" -G "MinGW Makefiles"
         cmake --build .
 
     # Only create artifact on a push to master
