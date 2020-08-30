@@ -23,6 +23,7 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
         7z x -y sdl2.tar.gz
+        ls
         7z x -y SDL2-devel-2.0.12-mingw.tar "-oC:\tools\"
 
     - name: Compile
