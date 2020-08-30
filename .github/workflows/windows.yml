@@ -30,7 +30,7 @@ jobs:
         mkdir build
         cd build
         ls c:/tools/
-        cmake .. -DSDL2_PATH="C:/tools/sdl2"
+        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12"
         make
 
     # Only create artifact on a push to master
