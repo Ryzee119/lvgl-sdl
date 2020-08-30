@@ -25,7 +25,7 @@ jobs:
     - name: Install and Setup Dependencies 
       shell: msys2 {0}
       run: |
-        pacman -S --noconfirm git mingw-w64-x86_64-toolchain mingw64/mingw-w64-x86_64-SDL2
+        pacman -S --noconfirm mingw-w64-x86_64-toolchain mingw64/mingw-w64-x86_64-SDL2
         pacman -S --noconfirm mingw64/mingw-w64-x86_64-cmake make
 
     - name: Compile
@@ -37,6 +37,7 @@ jobs:
         cmake .. -G "MinGW Makefiles"
         make
         ls
+        make
 
     # Only create artifact on a push to master
     # - if: github.event_name == 'push' 
