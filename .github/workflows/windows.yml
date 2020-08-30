@@ -29,7 +29,8 @@ jobs:
         cd example/
         mkdir build
         cd build
-        cmake .. -DSDL2_PATH="C:\tools\sdl2"
+        ls c:/tools/
+        cmake .. -DSDL2_PATH="C:/tools/sdl2"
         make
 
     # Only create artifact on a push to master
