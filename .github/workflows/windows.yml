@@ -21,8 +21,9 @@ jobs:
 
     - name: Install and Setup Dependencies 
       run: |
-        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.zip"
-        7z xzvf -y sdl2.zip "-oC:\tools\"
+        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
+        7z x -y -y sdl2.tar.gz "
+        7z x -y "sdl2.tar.gz" -so | 7z x -y -aoa -si -ttar "-oC:\tools\
 
     - name: Compile
       run: |
