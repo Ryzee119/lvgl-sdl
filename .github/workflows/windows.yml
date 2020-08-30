@@ -33,6 +33,7 @@ jobs:
         copy C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/bin/SDL2.dll SDL2.dll
         cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
         cmake --build .
+        ls
 
     # Only create artifact on a push to master
     # - if: github.event_name == 'push' 
@@ -41,5 +42,5 @@ jobs:
       with:
         name: lvgl_example_winx86_64
         path: |
-          example/build/lvgl_example.exe
+          lvgl_example.exe
           SDL2.dll
