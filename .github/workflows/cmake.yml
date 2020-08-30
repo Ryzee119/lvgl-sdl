@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Linux:
+    env:
+      FILENAME: 0
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install and Setup Dependencies
+      run: |
+        sudo apt install libsdl2-dev
+
+        #Create output filename
+        export FILENAME=lvgl_example_$(date -u +'%Y%m%d%H%M')
+        echo "::set-env name=FILENAME::$FILENAME"
+
+    - name: Compile
+      run: |
+        cd example/
+        mkdir build
+        cd build
+        cmake ..
+        make
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.FILENAME }}
+        path: |
+          lvgl_example
