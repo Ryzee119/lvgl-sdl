@@ -31,7 +31,8 @@ jobs:
     - name: Compile
       shell: msys2 {0}
       run: |
-        cd `$GITHUB_WORKSPACE
+        ls
+        cd D:\a\nxdk-lvgl\nxdk-lvgl
         cd example/
         mkdir build
         cd build
