@@ -21,7 +21,6 @@ jobs:
 
     - name: Install and Setup Dependencies 
       run: |
-        wget 
         Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip" -OutFile "sdl2.zip"
         7z x -y sdl2.zip "-oC:\tools\"
 
