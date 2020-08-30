@@ -35,9 +35,9 @@ jobs:
         mkdir build
         cd build
         cmake .. -G "MinGW Makefiles"
-        make
+        make -v
         ls
-        make
+        make -f Makefile
 
     # Only create artifact on a push to master
     # - if: github.event_name == 'push' 
