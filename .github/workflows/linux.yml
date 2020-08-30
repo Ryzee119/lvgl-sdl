@@ -8,9 +8,6 @@ on:
 
 jobs:
   Linux:
-    env:
-      FILENAME: 0
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +20,6 @@ jobs:
       run: |
         sudo apt install libsdl2-dev
 
-        #Create output filename
-        export FILENAME=lvgl_example_$(date -u +'%Y%m%d%H%M')
-        echo "::set-env name=FILENAME::$FILENAME"
-
     - name: Compile
       run: |
         cd example/
@@ -36,10 +29,10 @@ jobs:
         make
 
     # Only create artifact on a push to master
-    - if: github.event_name == 'push' 
-      name: Upload Artifact
+    # - if: github.event_name == 'push' 
+    - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.FILENAME }}
+        name: lvgl_example_linux
         path: |
-          lvgl_example
+          example/build/lvgl_example
