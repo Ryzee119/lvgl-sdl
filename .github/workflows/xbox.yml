@@ -7,21 +7,21 @@ on:
     branches: [ master ]
 
 jobs:
-  Linux:
+  Xbox:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install and Setup Dependencies
+      run: |
+        sudo apt-get update -y && sudo apt-get install -y flex bison clang lld
+        cd ~
+        git clone https://github.com/XboxDev/nxdk.git --recursive
+        export PATH=$PATH:/usr/lib/llvm-6.0/bin
+ 
     - name: Checkout Repository
       uses: actions/checkout@v2
       with:
         submodules: true
-
-    - name: Install and Setup Dependencies
-      run: |
-        sudo apt-get update -y && sudo apt-get install -y flex bison clang lld
-        git clone https://github.com/XboxDev/nxdk.git --recursive
-        ls /usr/lib/
-        export PATH=$PATH:/usr/lib/llvm-6.0/bin
 
     - name: Compile
       run: |
