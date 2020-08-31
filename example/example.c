@@ -32,6 +32,7 @@
 #include "input_test.h"
 
 #ifdef NXDK
+#include <hal/video.h>
 #include <hal/debug.h>
 #include <windows.h>
 #define printf(fmt, ...) debugPrint(fmt, __VA_ARGS__)
@@ -41,10 +42,13 @@ void lv_demo_filesystem(void);
 
 int main(void)
 {
+    #ifdef NXDK
+    XVideoSetMode(LV_HOR_RES_MAX, LV_VER_RES_MAX, LV_COLOR_DEPTH, REFRESH_DEFAULT);
+    #endif
+
     lv_init();
     lv_sdl_init_display("My lvgl example");
     lv_sdl_init_input();
-    
 
 #if (LV_USE_DEMO_FILESYSTEM == 1)
     #if (LV_USE_FILESYSTEM == 0)
@@ -55,6 +59,7 @@ int main(void)
     #endif
 #endif
 
+    printf("Starting demo...\n");
 #if (LV_USE_DEMO_BENCHMARK == 1)
     lv_demo_benchmark();
 #elif (LV_USE_DEMO_STRESS == 1)
@@ -87,7 +92,7 @@ void lv_demo_filesystem(void)
 
     //Open a directory (Can use absolute path or relative)
     //Xbox must use absolute
-    const char *dir_path = "./";
+    const char *dir_path = "D:\\";
     fs_drv->dir_open_cb(fs_drv, dir_p, dir_path);
 
     //Test directory listing
