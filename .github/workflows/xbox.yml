@@ -35,5 +35,5 @@ jobs:
       with:
         name: lvgl_example_ogxbox
         path: |
-          example/lvgl_example.iso
-          example/default.xbe
+          example/lvgl-xbox.iso
+          example/bin
