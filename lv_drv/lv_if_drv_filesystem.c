@@ -45,6 +45,11 @@ typedef DIR *dir_t;
 
 typedef FILE *file_t;
 
+#ifdef NXDK
+#include <hal/debug.h>
+#define printf(fmt, ...) debugPrint(fmt, __VA_ARGS__)
+#endif
+
 #define DEBUG_FS 1
 #define debug_printf(fmt, ...)          \
     do                                  \
@@ -52,6 +57,8 @@ typedef FILE *file_t;
         if (DEBUG_FS)                   \
             printf(fmt, ##__VA_ARGS__); \
     } while (0)
+
+
 
 /**********************
  *  STATIC PROTOTYPES

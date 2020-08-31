@@ -33,13 +33,13 @@
 #endif
 
 /*Benchmark your system*/
-#define LV_USE_DEMO_BENCHMARK   1
+#define LV_USE_DEMO_BENCHMARK   0
 
 /*Stress test for LVGL*/
 #define LV_USE_DEMO_STRESS      0
 
 /*Test SDL Keyboard/Gamecontroller Input*/
-#define LV_USE_DEMO_INPUT 0
+#define LV_USE_DEMO_INPUT 1
 
 /*Test the filesystem driver*/
 #define LV_USE_DEMO_FILESYSTEM 1

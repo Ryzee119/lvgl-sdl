@@ -40,40 +40,42 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void selectors_create(lv_obj_t * parent);
+static void selectors_create(lv_obj_t *parent);
 static void msgbox_create(void);
 
-static void focus_cb(lv_group_t * g);
-static void msgbox_event_cb(lv_obj_t * msgbox, lv_event_t e);
-static void tv_event_cb(lv_obj_t * ta, lv_event_t e);
-static void ta_event_cb(lv_obj_t * ta, lv_event_t e);
-static void kb_event_cb(lv_obj_t * kb, lv_event_t e);
+static void focus_cb(lv_group_t *g);
+static void msgbox_event_cb(lv_obj_t *msgbox, lv_event_t e);
+static void tv_event_cb(lv_obj_t *ta, lv_event_t e);
+static void ta_event_cb(lv_obj_t *ta, lv_event_t e);
+static void kb_event_cb(lv_obj_t *kb, lv_event_t e);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_group_t*  g;
-static lv_obj_t * tv;
-static lv_obj_t * t1;
-static lv_obj_t * t2;
-static lv_obj_t * t3;
+static lv_group_t *g;
+static lv_obj_t *tv;
+static lv_obj_t *t1;
+static lv_obj_t *t2;
+static lv_obj_t *t3;
 
-struct {
-    lv_obj_t * btn;
-    lv_obj_t * cb;
-    lv_obj_t * slider;
-    lv_obj_t * sw;
-    lv_obj_t * spinbox;
-    lv_obj_t * dropdown;
-    lv_obj_t * roller;
-    lv_obj_t * list;
-}selector_objs;
+struct
+{
+    lv_obj_t *btn;
+    lv_obj_t *cb;
+    lv_obj_t *slider;
+    lv_obj_t *sw;
+    lv_obj_t *spinbox;
+    lv_obj_t *dropdown;
+    lv_obj_t *roller;
+    lv_obj_t *list;
+} selector_objs;
 
-struct {
-    lv_obj_t * ta1;
-    lv_obj_t * ta2;
-    lv_obj_t * kb;
-}textinput_objs;
+struct
+{
+    lv_obj_t *ta1;
+    lv_obj_t *ta2;
+    lv_obj_t *kb;
+} textinput_objs;
 
 /**********************
  *      MACROS
@@ -85,32 +87,41 @@ struct {
 
 LV_EVENT_CB_DECLARE(dd_enc)
 {
-    if(e == LV_EVENT_VALUE_CHANGED) {
+    if (e == LV_EVENT_VALUE_CHANGED)
+    {
         printf("chg\n");
     }
 }
 
 void lv_demo_sdl_input(void)
 {
+    //Create a object group
     g = lv_group_create();
     lv_group_set_focus_cb(g, focus_cb);
 
-    lv_indev_t * sdl_indev = lv_indev_get_next(NULL);
+    lv_indev_t *sdl_indev = lv_indev_get_next(NULL);
 
-    if(sdl_indev == NULL)
+    if (sdl_indev == NULL)
         return;
 
     lv_indev_set_group(sdl_indev, g);
 
-    tv = lv_tabview_create(lv_scr_act(), NULL);
-    lv_obj_set_event_cb(tv, tv_event_cb);
 
-    t1 = lv_tabview_add_tab(tv, "Selectors");
-    t2 = lv_tabview_add_tab(tv, "Text input");
+    tv = lv_list_create(lv_scr_act(), NULL);
+    lv_obj_align(tv, lv_scr_act(), LV_ALIGN_IN_TOP_MID, 0, 0);
+
+    lv_list_add_btn(tv, LV_SYMBOL_AUDIO, "Music");
+    lv_list_add_btn(tv, LV_SYMBOL_VIDEO, "Videos");
+    lv_list_add_btn(tv, LV_SYMBOL_LIST, "Applications");
+    lv_list_add_btn(tv, LV_SYMBOL_FILE, "Files");
+    lv_list_add_btn(tv, LV_SYMBOL_SETTINGS, "Settings");
+    lv_list_add_btn(tv, LV_SYMBOL_DOWNLOAD, "Downloads");
+    lv_list_add_btn(tv, LV_SYMBOL_POWER, "Power");
+
+    //lv_obj_set_event_cb(tv, tv_event_cb);
 
     lv_group_add_obj(g, tv);
 
-    selectors_create(t1);
     msgbox_create();
 }
 
@@ -118,41 +129,38 @@ void lv_demo_sdl_input(void)
  *   STATIC FUNCTIONS
  **********************/
 
-static void selectors_create(lv_obj_t * parent)
+static void selectors_create(lv_obj_t *parent)
 {
-   selector_objs.list = lv_list_create(parent, NULL);
-   if(lv_obj_get_height(selector_objs.list) > lv_page_get_height_fit(parent)) {
-       lv_obj_set_height(selector_objs.list, lv_page_get_height_fit(parent));
-   }
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_OK, "Apply");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_CLOSE, "Close");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_EYE_OPEN, "Show");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_EYE_CLOSE, "Hide");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_TRASH, "Delete");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_COPY, "Copy");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
-   
+    selector_objs.list = lv_list_create(parent, NULL);
+    if (lv_obj_get_height(selector_objs.list) > lv_page_get_height_fit(parent))
+    {
+        lv_obj_set_height(selector_objs.list, lv_page_get_height_fit(parent));
+    }
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_OK, "Apply");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_CLOSE, "Close");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_EYE_OPEN, "Show");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_EYE_CLOSE, "Hide");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_TRASH, "Delete");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_COPY, "Copy");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
+    lv_list_add_btn(selector_objs.list, LV_SYMBOL_PASTE, "Paste");
 }
 
 static void msgbox_create(void)
 {
-    lv_obj_t * mbox = lv_msgbox_create(lv_layer_top(), NULL);
-    lv_msgbox_set_text(mbox, "Welcome to the keyboard and encoder demo");
+    lv_obj_t *mbox = lv_msgbox_create(lv_layer_top(), NULL);
+    lv_msgbox_set_text(mbox, "Welcome to the this input demo");
     lv_obj_set_event_cb(mbox, msgbox_event_cb);
     lv_group_add_obj(g, mbox);
     lv_group_focus_obj(mbox);
-#if LV_EX_MOUSEWHEEL
-    lv_group_set_editing(g, true);
-#endif
     lv_group_focus_freeze(g, true);
 
-    static const char * btns[] = {"Ok", "Cancel", ""};
+    static const char *btns[] = {"Ok", "Cancel", ""};
     lv_msgbox_add_btns(mbox, btns);
     lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
 
@@ -161,11 +169,13 @@ static void msgbox_create(void)
     lv_obj_set_click(lv_layer_top(), true);
 }
 
-static void msgbox_event_cb(lv_obj_t * msgbox, lv_event_t e)
+static void msgbox_event_cb(lv_obj_t *msgbox, lv_event_t e)
 {
-    if(e == LV_EVENT_CLICKED) {
+    if (e == LV_EVENT_CLICKED)
+    {
         uint16_t b = lv_msgbox_get_active_btn(msgbox);
-        if(b == 0 || b == 1) {
+        if (b == 0 || b == 1)
+        {
             lv_obj_del(msgbox);
             lv_obj_reset_style_list(lv_layer_top(), LV_OBJ_PART_MAIN);
             lv_obj_set_click(lv_layer_top(), false);
@@ -174,12 +184,14 @@ static void msgbox_event_cb(lv_obj_t * msgbox, lv_event_t e)
     }
 }
 
-static void focus_cb(lv_group_t * group)
+static void focus_cb(lv_group_t *group)
 {
-    lv_obj_t * obj = lv_group_get_focused(group);
-    if(obj != tv) {
+    lv_obj_t *obj = lv_group_get_focused(group);
+    if (obj != tv)
+    {
         uint16_t tab = lv_tabview_get_tab_act(tv);
-        switch(tab) {
+        switch (tab)
+        {
         case 0:
             lv_page_focus(t1, obj, LV_ANIM_ON);
             break;
@@ -193,46 +205,53 @@ static void focus_cb(lv_group_t * group)
     }
 }
 
-static void tv_event_cb(lv_obj_t * ta, lv_event_t e)
+static void tv_event_cb(lv_obj_t *ta, lv_event_t e)
 {
-    if(e == LV_EVENT_VALUE_CHANGED || e == LV_EVENT_REFRESH) {
+    if (e == LV_EVENT_VALUE_CHANGED || e == LV_EVENT_REFRESH)
+    {
         lv_group_remove_all_objs(g);
 
         uint16_t tab = lv_tabview_get_tab_act(tv);
         size_t size = 0;
-        lv_obj_t ** objs = NULL;
-        if(tab == 0) {
+        lv_obj_t **objs = NULL;
+        if (tab == 0)
+        {
             size = sizeof(selector_objs);
-            objs = (lv_obj_t**) &selector_objs;
+            objs = (lv_obj_t **)&selector_objs;
         }
-        else if(tab == 1) {
+        else if (tab == 1)
+        {
             size = sizeof(textinput_objs);
-            objs = (lv_obj_t**) &textinput_objs;
+            objs = (lv_obj_t **)&textinput_objs;
         }
 
         lv_group_add_obj(g, tv);
 
         uint32_t i;
-        for(i = 0; i < size / sizeof(lv_obj_t *); i++) {
-            if(objs[i] == NULL) continue;
+        for (i = 0; i < size / sizeof(lv_obj_t *); i++)
+        {
+            if (objs[i] == NULL)
+                continue;
             lv_group_add_obj(g, objs[i]);
         }
-
     }
-
 }
 
-static void ta_event_cb(lv_obj_t * ta, lv_event_t e)
+static void ta_event_cb(lv_obj_t *ta, lv_event_t e)
 {
     /*Create a virtual keyboard for the encoders*/
-    lv_indev_t * indev = lv_indev_get_act();
-    if(indev == NULL) return;
+    lv_indev_t *indev = lv_indev_get_act();
+    if (indev == NULL)
+        return;
     lv_indev_type_t indev_type = lv_indev_get_type(indev);
 
-    if(e == LV_EVENT_FOCUSED) {
+    if (e == LV_EVENT_FOCUSED)
+    {
         lv_textarea_set_cursor_hidden(ta, false);
-        if(lv_group_get_editing(g)) {
-            if(textinput_objs.kb == NULL) {
+        if (lv_group_get_editing(g))
+        {
+            if (textinput_objs.kb == NULL)
+            {
                 textinput_objs.kb = lv_keyboard_create(lv_scr_act(), NULL);
                 lv_group_add_obj(g, textinput_objs.kb);
                 lv_obj_set_event_cb(textinput_objs.kb, kb_event_cb);
@@ -245,22 +264,28 @@ static void ta_event_cb(lv_obj_t * ta, lv_event_t e)
             lv_page_focus(t2, lv_textarea_get_label(ta), LV_ANIM_ON);
         }
     }
-    else if(e == LV_EVENT_DEFOCUSED) {
-        if(indev_type == LV_INDEV_TYPE_ENCODER) {
-            if(textinput_objs.kb == NULL) {
+    else if (e == LV_EVENT_DEFOCUSED)
+    {
+        if (indev_type == LV_INDEV_TYPE_ENCODER)
+        {
+            if (textinput_objs.kb == NULL)
+            {
                 lv_textarea_set_cursor_hidden(ta, true);
             }
-        } else {
+        }
+        else
+        {
             lv_textarea_set_cursor_hidden(ta, true);
         }
     }
 }
 
-static void kb_event_cb(lv_obj_t * kb, lv_event_t e)
+static void kb_event_cb(lv_obj_t *kb, lv_event_t e)
 {
     lv_keyboard_def_event_cb(kb, e);
 
-    if(e == LV_EVENT_APPLY || e == LV_EVENT_CANCEL) {
+    if (e == LV_EVENT_APPLY || e == LV_EVENT_CANCEL)
+    {
         lv_group_focus_obj(lv_keyboard_get_textarea(kb));
         lv_obj_del(kb);
         textinput_objs.kb = NULL;

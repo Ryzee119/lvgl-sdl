@@ -28,13 +28,13 @@
 #include "lv_conf.h"
 #include "lv_sdl_drv_input.h"
 
-static lv_group_t *input_group;
 static bool quit_event = false;
 
 static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
 {
     (void)drv;
     data->key = 0;
+
     static SDL_Event e;
     if (SDL_PollEvent(&e))
     {
@@ -70,16 +70,16 @@ static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
         {
             switch (e.key.keysym.sym)
             {
-                case SDLK_ESCAPE:        data->key = LV_KEY_ESC; break;
-                case SDLK_BACKSPACE:     data->key = LV_KEY_BACKSPACE; break;
-                case SDLK_HOME:          data->key = LV_KEY_HOME; break;
-                case SDLK_RETURN:        data->key = LV_KEY_ENTER; break;
-                case SDLK_PAGEDOWN:      data->key = LV_KEY_PREV; break;
-                case SDLK_PAGEUP:        data->key = LV_KEY_NEXT; break;
-                case SDLK_UP:            data->key = LV_KEY_UP; break;
-                case SDLK_DOWN:          data->key = LV_KEY_DOWN; break;
-                case SDLK_LEFT:          data->key = LV_KEY_LEFT; break;
-                case SDLK_RIGHT:         data->key = LV_KEY_RIGHT; break;
+                case SDLK_ESCAPE:    data->key = LV_KEY_ESC; break;
+                case SDLK_BACKSPACE: data->key = LV_KEY_BACKSPACE; break;
+                case SDLK_HOME:      data->key = LV_KEY_HOME; break;
+                case SDLK_RETURN:    data->key = LV_KEY_ENTER; break;
+                case SDLK_PAGEDOWN:  data->key = LV_KEY_PREV; break;
+                case SDLK_PAGEUP:    data->key = LV_KEY_NEXT; break;
+                case SDLK_UP:        data->key = LV_KEY_UP; break;
+                case SDLK_DOWN:      data->key = LV_KEY_DOWN; break;
+                case SDLK_LEFT:      data->key = LV_KEY_LEFT; break;
+                case SDLK_RIGHT:     data->key = LV_KEY_RIGHT; break;
             }
         }
 
@@ -107,14 +107,15 @@ lv_indev_t *lv_sdl_init_input(void)
         printf("SDL_InitSubSystem failed: %s\n", SDL_GetError());
 
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-    SDL_GameControllerOpen(0);
+    for (int i = 0; i < SDL_NumJoysticks(); i++)
+    {
+        SDL_GameControllerOpen(i);
+    }
 
     lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_KEYPAD;
     indev_drv.read_cb = sdl_input_read;
-
-    input_group = lv_group_create();
 
     return lv_indev_drv_register(&indev_drv);
 }

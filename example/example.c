@@ -92,7 +92,11 @@ void lv_demo_filesystem(void)
 
     //Open a directory (Can use absolute path or relative)
     //Xbox must use absolute
+    #ifdef NXDK
     const char *dir_path = "D:\\";
+    #else
+    const char *dir_path = "./";
+    #endif
     fs_drv->dir_open_cb(fs_drv, dir_p, dir_path);
 
     //Test directory listing
