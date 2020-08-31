@@ -1,0 +1,43 @@
+name: Windows
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Install and Setup Dependencies 
+      run: |
+        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
+        7z x -y sdl2.tar.gz
+        7z x -y sdl2.tar "-oC:/tools/"
+
+    - name: Compile
+      run: |
+        cd example/
+        mkdir build
+        cd build
+        copy C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/bin/SDL2.dll SDL2.dll
+        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
+        cmake --build .
+        ls
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: lvgl_example_winx86_64
+        path: |
+          example/build/lvgl_example.exe
+          example/build/SDL2.dll
