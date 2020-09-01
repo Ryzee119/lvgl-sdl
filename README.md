@@ -4,8 +4,8 @@
 A crossplatform SDL wrapper for the Light and Versatile Graphics Library https://lvgl.io/.
 * SDL2 video backend.
 * SDL gamecontroller and keyboard input driver.
-* Filesystem driver uses `stdio.h` for file access. Can be disabled with `-DDISABLE_FS_DRV`.
-* Supports directory listings with `windows.h` winapi for Windows, and `dirent.h` for Linux. Can be disabled with `-DDISABLE_FS_DIR_LISTING`.
+* Filesystem driver uses `stdio.h` for file access.
+* Supports directory listings with `windows.h` winapi for Windows, and `dirent.h` for Linux.
 * Cross platform, currently suppots Windows, Linux, Original Xbox!
 
 # Include in your project
@@ -40,8 +40,8 @@ pacman -S mingw-w64-x86_64-make \
 cd example/
 mkdir build
 cd build
-mingw-w64-x86_64-cmake ..
-mingw-w64-x86_64-make
+cmake ..
+make
 ./lvgl_example.exe
 ```
 
