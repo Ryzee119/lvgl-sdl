@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <SDL.h>
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 #include "lv_conf.h"
 #include "lv_sdl_drv_input.h"
 
