@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 #include "lv_conf.h"
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 void lv_if_init_filesystem(char ID);
 

@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 #include "lv_conf.h"
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 bool get_quit_event(void);
 lv_indev_t *lv_sdl_init_input(void);

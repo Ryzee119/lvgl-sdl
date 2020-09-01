@@ -30,7 +30,7 @@ extern "C"
 #endif
 
 #include "lv_conf.h"
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #if defined _WIN32 || defined __CYGWIN__
 #include <windows.h>

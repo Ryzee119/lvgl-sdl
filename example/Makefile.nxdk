@@ -13,7 +13,8 @@ CFLAGS += \
 	-I$(CURDIR) \
 	-I$(CURDIR)/../ \
 	-I$(CURDIR)/../lv_drv \
-	-O2
+	-O2 \
+	-DMAKE_EXAMPLE
 
 #Include lvgl main library
 SRCS +=	\

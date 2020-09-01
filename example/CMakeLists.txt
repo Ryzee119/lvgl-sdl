@@ -11,6 +11,8 @@ endif()
 
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
+add_definitions(-DMAKE_EXAMPLE)
+
 # Add all the source files
 file(GLOB LVGL_SOURCE_FILES
     # My lvgl driver source files
@@ -51,11 +53,9 @@ target_link_libraries(lvgl_example ${SDL2_LIBRARY})
 include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/lv_examples/)
 
-# For lv_conf.h and lv_conf_ex.h
-include_directories(${PROJECT_DIR}/../)
-
 # My lvgl driver includes
 include_directories(${LVDRV_DIR})
 
 # Main lvgl lib includes
 include_directories(${LVGL_DIR}/src/)
+include_directories(${LVGL_DIR}/../)

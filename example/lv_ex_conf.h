@@ -48,4 +48,3 @@
 #endif /*LV_EX_CONF_H*/
 
 #endif /*End of "Content enable"*/
-
