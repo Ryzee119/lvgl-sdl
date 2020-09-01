@@ -27,26 +27,28 @@ mkdir build
 cd build
 cmake ..
 make
+./lvgl_example
 ```
 
 ## Build (Windows)
 From a [MYSYS2](https://www.msys2.org/) environment:
 ```
 pacman -S mingw-w64-x86_64-make \
-          mingw-w64-x86_64-gcc \
           mingw-w64-x86_64-cmake \
+          mingw-w64-x86_64-gcc \
           mingw-w64-x86_64-SDL2
 cd example/
 mkdir build
 cd build
 mingw-w64-x86_64-cmake ..
 mingw-w64-x86_64-make
+./lvgl_example.exe
 ```
 
 ## Build (Original Xbox)
 Setup and install [nxdk](https://github.com/XboxDev/nxdk/)
 ```
 cd example/
-make -f Makefile.nxdk NXDK_DIR=/path/to.nxdk
+make -f Makefile.nxdk NXDK_DIR=/path/to/nxdk
 ```
 If you get a [llvm error](https://github.com/XboxDev/nxdk/issues/196), try adding llvm to `PATH` i.e: `export PATH=$PATH:/usr/lib/llvm-6.0/bin`
