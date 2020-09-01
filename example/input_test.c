@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "lv_ex_conf.h"
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #if LV_USE_DEMO_INPUT
 
