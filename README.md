@@ -11,15 +11,9 @@ A crossplatform SDL wrapper for the Light and Versatile Graphics Library https:/
 # Include in your project
 In your git repo:
 * `git submodule add https://github.com/Ryzee119/lvgl-sdl.git`
-* See the example [CMakeList.txt](./example/CMakeList.txt) for the required directories to include
+* See the example [CMakeLists.txt](./example/CMakeLists.txt) for the required directories to include
 * Copy `lv_conf.h` *next* to the lvgl directory.
-* In your code call
-```
-lv_init();
-lv_sdl_init_display("My window title");
-lv_sdl_init_input();
-lv_if_init_filesystem('1'); //Pass a char ID
-```
+* See the [example](./example/example.c) for usage.
 
 # Build the examples
 * Pre-built binaries can be downloaded from the [Actions](https://github.com/Ryzee119/lvgl-sdl/actions) page as artifacts. These just run the default example.
