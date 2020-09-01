@@ -11,6 +11,7 @@ SRCS += \
 	$(CURDIR)/../lv_drv/lv_if_drv_filesystem.c
 CFLAGS += \
 	-I$(CURDIR) \
+	-I$(CURDIR)/../ \
 	-I$(CURDIR)/../lv_drv \
 	-O2
 	-DMAKE_EXAMPLE
