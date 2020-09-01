@@ -58,3 +58,4 @@ include_directories(${LVDRV_DIR})
 
 # Main lvgl lib includes
 include_directories(${LVGL_DIR}/src/)
+include_directories(${LVGL_DIR}/../)
