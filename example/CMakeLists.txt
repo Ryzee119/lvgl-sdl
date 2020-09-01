@@ -51,9 +51,6 @@ target_link_libraries(lvgl_example ${SDL2_LIBRARY})
 include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/lv_examples/)
 
-# For lv_conf.h and lv_conf_ex.h
-include_directories(${PROJECT_DIR}/../)
-
 # My lvgl driver includes
 include_directories(${LVDRV_DIR})
 
