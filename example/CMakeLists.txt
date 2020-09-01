@@ -11,6 +11,8 @@ endif()
 
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
+add_definitions(-DMAKE_EXAMPLE)
+
 # Add all the source files
 file(GLOB LVGL_SOURCE_FILES
     # My lvgl driver source files
