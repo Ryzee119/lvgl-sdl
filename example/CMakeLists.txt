@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 project(lvgl)
 
+# Change these for your own project
 set(LVGL_DIR "${CMAKE_SOURCE_DIR}/../lvgl")
 set(LVDRV_DIR "${CMAKE_SOURCE_DIR}/../lv_drv")
 set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
@@ -11,6 +12,7 @@ endif()
 
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
+# Remove this for your own project
 add_definitions(-DMAKE_EXAMPLE)
 
 # Add all the source files
@@ -30,7 +32,7 @@ file(GLOB LVGL_SOURCE_FILES
     "${LVGL_DIR}/src/lv_themes/*.c"
     "${LVGL_DIR}/src/lv_widgets/*.c"
 
-    # My example project source files
+    # My example project source files (Change this for your own project)
     "${PROJECT_DIR}/example.c"
     "${PROJECT_DIR}/input_test.c"
     "${PROJECT_DIR}/lv_examples/src/lv_demo_benchmark/*.c"
@@ -49,7 +51,7 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 target_link_libraries(lvgl_example ${SDL2_LIBRARY})
 
-# My files includes
+# My example project includes (Change this for your own project)
 include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/lv_examples/)
 
