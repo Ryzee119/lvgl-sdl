@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-//Keep lvgl library happy as it expect lv_conf.h to be next to the lvgl directory.
+//Keep lvgl library happy as it expects lv_conf.h to be next to the lvgl directory.
 //This redirects it to the examples conf file in this repo or to the user lv_conf.h
 #ifdef MAKE_EXAMPLE
 #include "example/lv_conf.h"
