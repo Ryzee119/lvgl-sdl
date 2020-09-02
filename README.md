@@ -6,7 +6,7 @@ A crossplatform SDL wrapper for the Light and Versatile Graphics Library https:/
 * SDL gamecontroller and keyboard input driver.
 * Filesystem driver uses `stdio.h` for file access.
 * Supports directory listings with `windows.h` winapi for Windows, and `dirent.h` for Linux.
-* Cross platform, currently suppots Windows, Linux, Original Xbox!
+* Cross platform. Currently supports Windows, Linux and Original Xbox!
 
 # Include in your project
 In your git repo:
