@@ -75,6 +75,7 @@ static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
                 case SDLK_HOME:      data->key = LV_KEY_HOME; break;
                 case SDLK_RETURN:    data->key = LV_KEY_ENTER; break;
                 case SDLK_PAGEDOWN:  data->key = LV_KEY_PREV; break;
+                case SDLK_TAB:       data->key = LV_KEY_NEXT; break;
                 case SDLK_PAGEUP:    data->key = LV_KEY_NEXT; break;
                 case SDLK_UP:        data->key = LV_KEY_UP; break;
                 case SDLK_DOWN:      data->key = LV_KEY_DOWN; break;
