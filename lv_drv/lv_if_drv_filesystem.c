@@ -51,7 +51,7 @@ typedef DIR *dir_t;
 
 typedef FILE *file_t;
 
-#define DEBUG_FS 1
+#define DEBUG_FS 0
 #define debug_printf(fmt, ...)          \
     do                                  \
     {                                   \
