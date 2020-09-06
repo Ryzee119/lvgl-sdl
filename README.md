@@ -11,13 +11,15 @@ A crossplatform SDL wrapper for the Light and Versatile Graphics Library https:/
 # Include in your project
 In your git repo:
 * `git submodule add https://github.com/Ryzee119/lvgl-sdl.git`
+* `cd lvgl-sdl && git submodule init && git submodule update`
 * See the example [CMakeLists.txt](./example/CMakeLists.txt) for the required directories to include in your build system.
 * Copy `lv_conf.h` from `example/` folder *next* to the lvgl-sdl directory in your project.
 * See the [example](./example/example.c) for usage and required initialisation functions etc.
 
-# Build the examples
+# Or build the examples
 * Pre-built binaries can be downloaded from the [Actions](https://github.com/Ryzee119/lvgl-sdl/actions) page as artifacts. These just run the default example.
 * For manual compiling you can edit `lv_ex_conf.h` to change which demo to run.
+* Remember to clone this repo recusively i.e `git clone https://github.com/Ryzee119/lvgl-sdl.git --recursive`.
 
 ## Build (Linux)
 ```
@@ -46,12 +48,11 @@ make
 ```
 
 ## Build (Original Xbox)
-Setup and install [nxdk](https://github.com/XboxDev/nxdk/)
+Setup and install [nxdk](https://github.com/XboxDev/nxdk/).
 ```
 cd example/
 make -f Makefile.nxdk NXDK_DIR=/path/to/nxdk
 ```
-If you get a [llvm error](https://github.com/XboxDev/nxdk/issues/196), try adding llvm to `PATH` i.e: `export PATH=$PATH:/usr/lib/llvm-6.0/bin`
 
 ## Images
 ![example1](./images/example1.png)
