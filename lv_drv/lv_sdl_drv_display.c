@@ -29,8 +29,7 @@
 #include "lv_sdl_drv_display.h"
 
 static lv_disp_buf_t disp_buf;
-static lv_color_t buf_1[LV_HOR_RES_MAX * LV_VER_RES_MAX];
-static lv_color_t buf_2[LV_HOR_RES_MAX * LV_VER_RES_MAX];
+static lv_color_t pixels[LV_HOR_RES_MAX * LV_VER_RES_MAX];
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -46,10 +45,16 @@ static void sdl_fb_flush(lv_disp_drv_t *disp_drv,
     r.h = area->y2 - area->y1 + 1;
 
     SDL_UpdateTexture(framebuffer, &r, color_p, r.w * ((LV_COLOR_DEPTH + 7) / 8));
-    SDL_RenderCopy(renderer, framebuffer, &r, &r);
-    SDL_RenderPresent(renderer);
-
     lv_disp_flush_ready(disp_drv);
+}
+
+static void sdl_present(lv_task_t *task)
+{
+    if (renderer && framebuffer)
+    {
+        SDL_RenderCopy(renderer, framebuffer, NULL, NULL);
+        SDL_RenderPresent(renderer);
+    }
 }
 
 __attribute__((weak)) void display_wait_cb(lv_disp_drv_t *disp_drv)
@@ -59,10 +64,10 @@ __attribute__((weak)) void display_wait_cb(lv_disp_drv_t *disp_drv)
     //          User can execute very simple tasks here or yield the task
 }
 
-lv_disp_t *lv_sdl_init_display(const char* win_name)
+lv_disp_t *lv_sdl_init_display(const char *win_name)
 {
     //Setup the display buffer and driver
-    lv_disp_buf_init(&disp_buf, buf_1, buf_2, LV_HOR_RES_MAX * LV_VER_RES_MAX);
+    lv_disp_buf_init(&disp_buf, pixels, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX);
     lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.buffer = &disp_buf;
@@ -84,6 +89,8 @@ lv_disp_t *lv_sdl_init_display(const char* win_name)
                                     SDL_TEXTUREACCESS_STREAMING,
                                     LV_HOR_RES_MAX,
                                     LV_VER_RES_MAX);
+
+    lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_LOW, NULL);
 
     return lv_disp_drv_register(&disp_drv);
 }
