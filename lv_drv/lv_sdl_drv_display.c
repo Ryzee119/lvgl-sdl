@@ -30,6 +30,7 @@
 
 static lv_disp_buf_t disp_buf;
 static lv_color_t pixels[LV_HOR_RES_MAX * LV_VER_RES_MAX];
+static lv_task_t *sdl_present_task;
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -90,13 +91,14 @@ lv_disp_t *lv_sdl_init_display(const char *win_name)
                                     LV_HOR_RES_MAX,
                                     LV_VER_RES_MAX);
 
-    lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_LOW, NULL);
+    sdl_present_task = lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_LOW, NULL);
 
     return lv_disp_drv_register(&disp_drv);
 }
 
 void lv_sdl_deinit_display(void)
 {
+    lv_task_del(sdl_present_task);
     SDL_DestroyTexture(framebuffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
