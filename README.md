@@ -33,17 +33,16 @@ make
 ```
 
 ## Build (Windows)
-From a [MYSYS2](https://www.msys2.org/) environment:
+Install MYSYS2, then from a mingw64 environment:
 ```
 pacman -S mingw-w64-x86_64-make \
           mingw-w64-x86_64-cmake \
           mingw-w64-x86_64-gcc \
           mingw-w64-x86_64-SDL2
 cd example/
-mkdir build
-cd build
-cmake ..
-make
+mkdir build && cd build
+cmake .. -G "MinGW Makefiles"
+cmake --build .
 ./lvgl_example.exe
 ```
 
