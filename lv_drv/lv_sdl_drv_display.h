@@ -48,7 +48,7 @@ static inline uint64_t GetTickCountMs()
 }
 #endif
 
-lv_disp_t *lv_sdl_init_display(const char* win_name);
+lv_disp_t *lv_sdl_init_display(const char* win_name, int width, int height);
 void lv_sdl_deinit_display(void);
 
 #ifdef __cplusplus

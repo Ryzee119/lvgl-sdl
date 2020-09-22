@@ -38,16 +38,19 @@
 #define printf(fmt, ...) debugPrint(fmt, __VA_ARGS__)
 #endif
 
+static int width = 640;
+static int height = 480;
+
 void lv_demo_filesystem(void);
 
 int main(void)
 {
     #ifdef NXDK
-    XVideoSetMode(LV_HOR_RES_MAX, LV_VER_RES_MAX, LV_COLOR_DEPTH, REFRESH_DEFAULT);
+    XVideoSetMode(width, height, LV_COLOR_DEPTH, REFRESH_DEFAULT);
     #endif
 
     lv_init();
-    lv_sdl_init_display("My lvgl example");
+    lv_sdl_init_display("My lvgl example", width, height);
     lv_sdl_init_input();
 
 #if (LV_USE_DEMO_FILESYSTEM == 1)
