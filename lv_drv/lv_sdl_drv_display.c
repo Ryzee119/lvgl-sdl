@@ -103,7 +103,7 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
                                     width,
                                     height);
 
-    sdl_present_task = lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_LOW, NULL);
+    sdl_present_task = lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_HIGHEST, NULL);
 
     return lv_disp_drv_register(&disp_drv);
 }
