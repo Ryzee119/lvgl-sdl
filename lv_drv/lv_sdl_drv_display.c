@@ -23,38 +23,59 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <SDL.h>
 #include "lvgl.h"
 #include "lv_conf.h"
 #include "lv_sdl_drv_display.h"
 
 static lv_disp_buf_t disp_buf;
 static lv_color_t pixels[LV_HOR_RES_MAX * LV_VER_RES_MAX];
+#ifdef NXDK
+#include <hal/video.h>
+void *framebuffer;
+#else
+#include <SDL.h>
 static lv_task_t *sdl_present_task;
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *framebuffer = NULL;
+#endif
 static void sdl_fb_flush(lv_disp_drv_t *disp_drv,
                          const lv_area_t *area,
                          lv_color_t *color_p)
 {
-    SDL_Rect r;
-    r.x = area->x1;
-    r.y = area->y1;
-    r.w = area->x2 - area->x1 + 1;
-    r.h = area->y2 - area->y1 + 1;
 
     if(area->x2 < 0 || area->y2 < 0 ||
        area->x1 > disp_drv->hor_res - 1 || area->y1 > disp_drv->ver_res - 1) {
         lv_disp_flush_ready(disp_drv);
         return;
     }
+    #ifdef NXDK
+    static uint8_t pitch = (LV_COLOR_DEPTH + 7) / 8;
+    for(uint32_t y = area->y1; y <= area->y2; y++)
+    {
+        uint32_t line_start = y * disp_drv->hor_res * pitch;
+        for(uint32_t x = area->x1; x <= area->x2; x++)
+        {
+            lv_color_t *pixel = framebuffer + line_start + x * pitch;
+            *pixel = *color_p;
+            color_p++;
+        }
+    }
+    #else
+    SDL_Rect r;
+    r.x = area->x1;
+    r.y = area->y1;
+    r.w = area->x2 - area->x1 + 1;
+    r.h = area->y2 - area->y1 + 1;
 
     SDL_UpdateTexture(framebuffer, &r, color_p, r.w * ((LV_COLOR_DEPTH + 7) / 8));
+    #endif
+
     lv_disp_flush_ready(disp_drv);
 }
 
+#ifndef NXDK
 static void sdl_present(lv_task_t *task)
 {
     if (renderer && framebuffer)
@@ -63,6 +84,7 @@ static void sdl_present(lv_task_t *task)
         SDL_RenderPresent(renderer);
     }
 }
+#endif
 
 __attribute__((weak)) void display_wait_cb(lv_disp_drv_t *disp_drv)
 {
@@ -87,6 +109,9 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
     disp_drv.hor_res = width;
     disp_drv.ver_res = height;
 
+    #ifdef NXDK
+    framebuffer = XVideoGetFB();
+    #else
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
         printf("SDL_InitSubSystem failed: %s\n", SDL_GetError());
 
@@ -104,15 +129,18 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
                                     height);
 
     sdl_present_task = lv_task_create(sdl_present, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_HIGHEST, NULL);
+    #endif
 
     return lv_disp_drv_register(&disp_drv);
 }
 
 void lv_sdl_deinit_display(void)
 {
+    #ifndef NXDK
     lv_task_del(sdl_present_task);
     SDL_DestroyTexture(framebuffer);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    #endif
 }
