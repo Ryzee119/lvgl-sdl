@@ -32,6 +32,7 @@ extern "C" {
 #include "lvgl.h"
 
 bool get_quit_event(void);
+void set_quit_event(bool quit);
 lv_indev_t *lv_sdl_init_input(void);
 void lv_sdl_deinit_input(void);
 

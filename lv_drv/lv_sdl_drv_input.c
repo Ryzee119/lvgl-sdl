@@ -102,6 +102,11 @@ bool get_quit_event(void)
     return quit_event;
 }
 
+void set_quit_event(bool quit)
+{
+    quit_event = quit;
+}
+
 lv_indev_t *lv_sdl_init_input(void)
 {
     if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) != 0)
