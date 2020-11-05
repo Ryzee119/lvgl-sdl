@@ -507,7 +507,7 @@ static lv_fs_res_t fs_dir_read(lv_fs_drv_t *drv, void *dir_p, char *fn)
         else
         {
             strcpy(fn, "");
-            debug_printf("No more files in %s\n", working_dir);
+            debug_printf("No more files in %s\n", cwd);
             return LV_FS_RES_FS_ERR;
         }
     } while (strcmp(fn, "/.") == 0 || strcmp(fn, "/..") == 0);
