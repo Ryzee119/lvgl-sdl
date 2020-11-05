@@ -31,7 +31,8 @@ extern "C" {
 #include "lv_conf.h"
 #include "lvgl.h"
 
-void lv_if_init_filesystem(char ID);
+void lv_if_init_filesystem(const char *fs_id);
+void lv_if_deinit_filesystem(const char *fs_id);
 
 #ifdef __cplusplus
 }

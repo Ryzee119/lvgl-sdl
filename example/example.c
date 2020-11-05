@@ -38,6 +38,15 @@
 #define printf(fmt, ...) debugPrint(fmt, __VA_ARGS__)
 #endif
 
+#if (LV_USE_FILESYSTEM == 1)
+const char *fs_id = "0:";
+#ifdef NXDK
+const char *dir_path = "D:\\";
+#else
+const char *dir_path = "./";
+#endif
+#endif
+
 static int width = 640;
 static int height = 480;
 
@@ -57,7 +66,7 @@ int main(void)
     #if (LV_USE_FILESYSTEM == 0)
     #error "You must enable LV_USE_FILESYSTEM to use LV_USE_DEMO_FILESYSTEM"
     #else
-    lv_if_init_filesystem('1');
+    lv_if_init_filesystem(fs_id);
     lv_demo_filesystem();
     #endif
 #endif
@@ -79,40 +88,42 @@ int main(void)
     printf("Freeing resources and quitting\n");
     lv_sdl_deinit_input();
     lv_sdl_deinit_display();
+#if (LV_USE_DEMO_FILESYSTEM == 1)
+    lv_if_deinit_filesystem(fs_id);
+#endif
     lv_deinit();
     return 0;
 }
 
 #if (LV_USE_DEMO_FILESYSTEM == 1 && LV_USE_FILESYSTEM == 1)
+//All file paths must be prefixed by the fs_id so the fs knows what driver to use
+static char *create_path(const char* fs_id, const char *path)
+{
+    static char full_path[256];
+    snprintf(full_path, sizeof(full_path), "%s%s", fs_id, path);
+    return full_path;
+}
+
 void lv_demo_filesystem(void)
 {
 
-    //Create a file system driver with an ID. (i.e. '1')
-    lv_fs_drv_t *fs_drv = lv_fs_get_drv('1');
-    void *file_p = malloc(sizeof(fs_drv->file_size));
-    void *dir_p = malloc(sizeof(fs_drv->rddir_size));
+    //Open a directory (Must use relate path)
+    lv_fs_dir_t dir_p;
+    lv_fs_dir_open(&dir_p, create_path(fs_id, dir_path));
     char fname[256];
-
-    //Open a directory (Can use absolute path or relative)
-    //Xbox must use absolute
-    #ifdef NXDK
-    const char *dir_path = "D:\\";
-    #else
-    const char *dir_path = "./";
-    #endif
-    fs_drv->dir_open_cb(fs_drv, dir_p, dir_path);
 
     //Test directory listing
     //Read all files/folders in a directory and print them
-    printf("*** Listing all files in \"%s\" ***\n", dir_path);
-    while (fs_drv->dir_read_cb(fs_drv, dir_p, fname) == LV_FS_RES_OK)
+    printf("*** Listing all files in \"%s\" ***\n", create_path(fs_id, dir_path));
+    while (lv_fs_dir_read(&dir_p, fname) == LV_FS_RES_OK)
     {
         printf("%s\n", fname);
     }
     printf("\n\n");
 
     //Test writing a file, then reading the data back
-    const char *TEST_FILE = "my_test_file.txt";
+    lv_fs_file_t file_p;
+    const char *TEST_FILE = "my_test_file.txt"; //Need to prefix all with the fs_id
     const char *TEST_STRING = "Hello this is my lvgl project!\n";
     char readback_buf[256];
     uint32_t bytes_written = 0;
@@ -121,24 +132,24 @@ void lv_demo_filesystem(void)
     {
         printf("*** Testing write and readback to \"%s\" ***\n", TEST_FILE);
         //Create a new file, (overwrite if already exists)
-        if (fs_drv->open_cb(fs_drv, file_p, TEST_FILE, LV_FS_MODE_WR) != LV_FS_RES_OK)
+        if (lv_fs_open(&file_p, create_path(fs_id, TEST_FILE), LV_FS_MODE_WR) != LV_FS_RES_OK)
             break;
 
-        if (fs_drv->write_cb(fs_drv, file_p, TEST_STRING, strlen(TEST_STRING), &bytes_written) != LV_FS_RES_OK)
+        if (lv_fs_write(&file_p, TEST_STRING, strlen(TEST_STRING), &bytes_written) != LV_FS_RES_OK)
             break;
 
         //Close the file
-        fs_drv->close_cb(fs_drv, file_p);
+        lv_fs_close(&file_p);
 
         //Now let's read back what we just wrote
-        if (fs_drv->open_cb(fs_drv, file_p, TEST_FILE, LV_FS_MODE_RD) != LV_FS_RES_OK)
+        if (lv_fs_open(&file_p, create_path(fs_id, TEST_FILE), LV_FS_MODE_RD) != LV_FS_RES_OK)
             break;
 
         //Reading some data into buf
-        fs_drv->read_cb(fs_drv, file_p, readback_buf, strlen(TEST_STRING), &bytes_read);
+        lv_fs_read(&file_p, readback_buf, strlen(TEST_STRING), &bytes_read);
 
         //Close the file
-        fs_drv->close_cb(fs_drv, file_p);
+        lv_fs_close(&file_p);
 
         //Print the data we just read
         printf("%s", readback_buf);
@@ -158,8 +169,6 @@ void lv_demo_filesystem(void)
     Sleep(2000);
     #endif
 
-    fs_drv->dir_close_cb(fs_drv, dir_p);
-    free(file_p);
-    free(dir_p);
+    lv_fs_dir_close(&dir_p);
 }
 #endif
