@@ -80,13 +80,14 @@ static lv_fs_res_t fs_dir_close(lv_fs_drv_t *drv, void *dir_p);
 /**
  * Register a driver for the File system interface
  */
-void lv_if_init_filesystem(char ID)
+void lv_if_init_filesystem(const char *fs_id)
 {
+    char *cwd = malloc(256);
     lv_fs_drv_t fs_drv;
     lv_fs_drv_init(&fs_drv);
 
     fs_drv.file_size = sizeof(file_t);
-    fs_drv.letter = ID;
+    fs_drv.letter = fs_id[0];
     fs_drv.open_cb = fs_open;
     fs_drv.close_cb = fs_close;
     fs_drv.read_cb = fs_read;
@@ -104,9 +105,27 @@ void lv_if_init_filesystem(char ID)
     fs_drv.dir_close_cb = fs_dir_close;
     fs_drv.dir_open_cb = fs_dir_open;
     fs_drv.dir_read_cb = fs_dir_read;
+    fs_drv.user_data = cwd;
+    strcpy(cwd, "");
 #endif
 
     lv_fs_drv_register(&fs_drv);
+    debug_printf("Filesystem registered with identifier: %c\n", fs_drv.letter);
+}
+
+void lv_if_deinit_filesystem(const char *fs_id)
+{
+    char letter = fs_id[0];
+
+    lv_fs_drv_t *drv = lv_fs_get_drv(letter);
+
+    if (drv == NULL)
+        return;
+
+    if (drv->user_data == NULL)
+        return;
+
+    free(drv->user_data);
 }
 
 static void change_path_separator(char *path)
@@ -142,19 +161,15 @@ static lv_fs_res_t fs_open(lv_fs_drv_t *drv, void *file_p, const char *path, lv_
     else if (mode == (LV_FS_MODE_WR | LV_FS_MODE_RD))
         flags = "rb+";
 
-    char *working_dir = (char *)drv->user_data;
+    char *cwd = drv->user_data;
 
     //Build and condition the full path
-    char buf[256];
-    if (working_dir != NULL)
-        sprintf(buf, "%s%s", working_dir, path);
-    else
-        sprintf(buf, "%s", path);
+    char full_path[256];
+    sprintf(full_path, "%s%s", cwd, path);
+    change_path_separator(full_path);
 
-    change_path_separator(buf);
-
-    debug_printf("Opening %s with flags %s...", buf, flags);
-    file_t f = fopen(buf, flags);
+    debug_printf("Opening %s with flags %s...", full_path, flags);
+    file_t f = fopen(full_path, flags);
     if (f == NULL)
     {
         debug_printf("Error!\n");
@@ -337,19 +352,14 @@ static lv_fs_res_t fs_rename(lv_fs_drv_t *drv, const char *oldname, const char *
     (void)drv;
     static char new[256];
     static char old[256];
-    static char blank[] = "";
-    char *working_dir;
-    
-    if (drv->user_data == NULL)
-        working_dir = blank;
-    else
-        working_dir = (char *)drv->user_data;
+
+    char *cwd = drv->user_data;
 
     //Build and condition the full path
-    sprintf(old, "%s%s", working_dir, oldname);
+    sprintf(old, "%s%s", cwd, oldname);
     change_path_separator(old);
 
-    sprintf(new, "%s%s", working_dir, newname);
+    sprintf(new, "%s%s", cwd, newname);
     change_path_separator(new);
 
     int r = rename(old, new);
@@ -390,37 +400,35 @@ static lv_fs_res_t fs_dir_open(lv_fs_drv_t *drv, void *dir_p, const char *path)
 {
     (void)drv;
 
-    if (drv->user_data == NULL)
-    {
-        drv->user_data = malloc(256);
-    }
-    char *working_dir = (char *)drv->user_data;
-    /*Make the path relative to the current directory (the projects root folder)*/
-    strcpy(working_dir, path);
-    change_path_separator(working_dir);
-    
+    char *cwd = drv->user_data;
+
+    //Append the folder to the root working_dir
+    sprintf(cwd, "%s%s", cwd, path);
+    change_path_separator(cwd);
+
     //Add a path separator on the end of the string if the user didnt have one
-    int len = strlen(working_dir);
-    if (len < (sizeof(working_dir) - 1) && working_dir[len - 1] != PATH_SEPARATOR)
+    int len = strlen(cwd);
+    if (len < (256 - 1) && cwd[len - 1] != PATH_SEPARATOR)
     {
-        working_dir[len] = PATH_SEPARATOR;
-        working_dir[len + 1] = '\0';
+        cwd[len] = PATH_SEPARATOR;
+        cwd[len + 1] = '\0';
     }
+
 #if LV_USE_FILESYSTEM_DIR_LISTING
     dir_t d;
     #if defined _WIN32 || defined __CYGWIN__
     d = INVALID_HANDLE_VALUE;
     #else
-    if ((d = opendir(working_dir)) == NULL)
+    if ((d = opendir(cwd)) == NULL)
     {
-        debug_printf("%s directory opened\n", working_dir);
+        debug_printf("%s directory opened\n", cwd);
         return LV_FS_RES_FS_ERR;
     }
     #endif
 
     dir_t *dp = dir_p;
     *dp = d;
-    debug_printf("%s directory opened\n", working_dir);
+    debug_printf("%s directory opened\n", cwd);
     return LV_FS_RES_OK;
 #else
     (void)dir_p;
@@ -442,10 +450,7 @@ static lv_fs_res_t fs_dir_read(lv_fs_drv_t *drv, void *dir_p, char *fn)
 #if LV_USE_FILESYSTEM_DIR_LISTING
     dir_t *dp = dir_p;
 
-    if (drv->user_data == NULL)
-        return LV_FS_RES_UNKNOWN;
-
-    char *working_dir = (char *)drv->user_data;
+    char *cwd = drv->user_data;
 
     #if defined _WIN32 || defined __CYGWIN__
     static WIN32_FIND_DATA fdata;
@@ -456,18 +461,18 @@ static lv_fs_res_t fs_dir_read(lv_fs_drv_t *drv, void *dir_p, char *fn)
     if (*dp == INVALID_HANDLE_VALUE)
     {
         char search_path[256];
-        sprintf(search_path, "%s%c", working_dir, '*');
+        sprintf(search_path, "%s%c", cwd, '*');
         debug_printf("Search path %s\n", search_path);
         *dp = FindFirstFile(search_path, &fdata);
         if (*dp == INVALID_HANDLE_VALUE)
         {
-            debug_printf("%s directory not found\n", working_dir);
+            debug_printf("%s directory not found\n", cwd);
             return LV_FS_RES_FS_ERR;
         }
     }
     else if (FindNextFile(*dp, &fdata) == 0)
     {
-        debug_printf("No more files in %s\n", working_dir);
+        debug_printf("No more files in %s\n", cwd);
         return LV_FS_RES_FS_ERR;
     }
 
@@ -502,7 +507,7 @@ static lv_fs_res_t fs_dir_read(lv_fs_drv_t *drv, void *dir_p, char *fn)
         else
         {
             strcpy(fn, "");
-            debug_printf("No more files in %s\n", working_dir);
+            debug_printf("No more files in %s\n", cwd);
             return LV_FS_RES_FS_ERR;
         }
     } while (strcmp(fn, "/.") == 0 || strcmp(fn, "/..") == 0);
@@ -524,8 +529,14 @@ static lv_fs_res_t fs_dir_read(lv_fs_drv_t *drv, void *dir_p, char *fn)
 static lv_fs_res_t fs_dir_close(lv_fs_drv_t *drv, void *dir_p)
 {
     (void)drv;
+
 #if LV_USE_FILESYSTEM_DIR_LISTING
     dir_t *dp = dir_p;
+
+    char *cwd = drv->user_data;
+    debug_printf("Closing dir %s\n", cwd);
+    lv_fs_up(cwd);
+    debug_printf("Final working dir %s\n", cwd);
 
     if (drv->user_data == NULL)
         return LV_FS_RES_UNKNOWN;
@@ -536,7 +547,6 @@ static lv_fs_res_t fs_dir_close(lv_fs_drv_t *drv, void *dir_p)
     #else
     closedir(*dp);
     #endif
-    free(drv->user_data);
     return LV_FS_RES_OK;
 #else
     (void)dir_p;
