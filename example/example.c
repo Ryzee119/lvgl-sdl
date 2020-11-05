@@ -125,7 +125,7 @@ void lv_demo_filesystem(void)
     lv_fs_file_t file_p;
     const char *TEST_FILE = "my_test_file.txt"; //Need to prefix all with the fs_id
     const char *TEST_STRING = "Hello this is my lvgl project!\n";
-    char readback_buf[256];
+    char readback_buf[256] = {0};
     uint32_t bytes_written = 0;
     uint32_t bytes_read = 0;
     do
@@ -135,7 +135,7 @@ void lv_demo_filesystem(void)
         if (lv_fs_open(&file_p, create_path(fs_id, TEST_FILE), LV_FS_MODE_WR) != LV_FS_RES_OK)
             break;
 
-        if (lv_fs_write(&file_p, TEST_STRING, strlen(TEST_STRING), &bytes_written) != LV_FS_RES_OK)
+        if (lv_fs_write(&file_p, TEST_STRING, strlen(TEST_STRING) + 1, &bytes_written) != LV_FS_RES_OK)
             break;
 
         //Close the file
