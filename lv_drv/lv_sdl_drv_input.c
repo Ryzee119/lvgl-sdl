@@ -28,7 +28,7 @@
 #include "lv_conf.h"
 #include "lv_sdl_drv_input.h"
 
-static bool quit_event = false;
+static quit_event_t quit_event = false;
 
 static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
 {
@@ -97,12 +97,12 @@ static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
         return false;
 }
 
-bool get_quit_event(void)
+quit_event_t get_quit_event(void)
 {
     return quit_event;
 }
 
-void set_quit_event(bool quit)
+void set_quit_event(quit_event_t quit)
 {
     quit_event = quit;
 }

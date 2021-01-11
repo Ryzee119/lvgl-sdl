@@ -31,8 +31,15 @@ extern "C" {
 #include "lv_conf.h"
 #include "lvgl.h"
 
-bool get_quit_event(void);
-void set_quit_event(bool quit);
+typedef enum 
+{
+    NONE = 0,
+    REBOOT,
+    SHUTDOWN
+} quit_event_t;
+
+quit_event_t get_quit_event(void);
+void set_quit_event(quit_event_t quit);
 lv_indev_t *lv_sdl_init_input(void);
 void lv_sdl_deinit_input(void);
 
