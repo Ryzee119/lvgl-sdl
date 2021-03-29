@@ -43,6 +43,11 @@ static bool sdl_input_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
         if (e.type == SDL_CONTROLLERBUTTONUP || e.type == SDL_KEYUP)
             data->state = LV_INDEV_STATE_REL;
 
+        if (e.type == SDL_CONTROLLERDEVICEADDED)
+            SDL_GameControllerOpen(e.cdevice.which);
+        if (e.type == SDL_CONTROLLERDEVICEREMOVED)
+            SDL_GameControllerClose(SDL_GameControllerFromInstanceID(e.cdevice.which));
+
         //Gamecontroller event
         if (e.type == SDL_CONTROLLERBUTTONDOWN || e.type == SDL_CONTROLLERBUTTONUP)
         {
