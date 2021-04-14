@@ -120,7 +120,8 @@ lv_indev_t *lv_sdl_init_input(void)
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     for (int i = 0; i < SDL_NumJoysticks(); i++)
     {
-        SDL_GameControllerOpen(i);
+        if (SDL_IsGameController(i))
+            SDL_GameControllerOpen(i);
     }
 
     lv_indev_drv_t indev_drv;
