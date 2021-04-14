@@ -80,6 +80,7 @@ static void sdl_present(lv_task_t *task)
 {
     if (renderer && framebuffer)
     {
+        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, framebuffer, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
@@ -117,9 +118,14 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
 
     window = SDL_CreateWindow(win_name,
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              width, height, 0);
+                              width, height, SDL_WINDOW_RESIZABLE);
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    if (renderer == NULL)
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+
+    SDL_RenderSetLogicalSize(renderer, width, height);
 
     framebuffer = SDL_CreateTexture(renderer,
                                     (LV_COLOR_DEPTH == 32) ? (SDL_PIXELFORMAT_ARGB8888) :
