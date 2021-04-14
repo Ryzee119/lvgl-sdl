@@ -4,3 +4,24 @@
 [submodule "example/lv_examples"]
 	path = example/lv_examples
 	url = https://github.com/lvgl/lv_examples.git
+[submodule "lv_lib_png"]
+	path = lv_lib_png
+	url = https://github.com/lvgl/lv_lib_png.git
+[submodule "lv_lib_jpg"]
+	path = lv_lib_jpg
+	url = https://github.com/lvgl/lv_lib_split_jpg.git
+[submodule "lv_lib_freetype"]
+	path = lv_lib_freetype
+	url = https://github.com/lvgl/lv_lib_freetype.git
+[submodule "lv_lib_gif"]
+	path = lv_lib_gif
+	url = https://github.com/lvgl/lv_lib_gif.git
+[submodule "lv_lib_rlottie"]
+	path = lv_lib_rlottie
+	url = https://github.com/lvgl/lv_lib_rlottie.git
+[submodule "lv_lib_bmp"]
+	path = lv_lib_bmp
+	url = https://github.com/lvgl/lv_lib_bmp.git
+[submodule "lv_lib_qrcode"]
+	path = lv_lib_qrcode
+	url = https://github.com/lvgl/lv_lib_qrcode.git
