@@ -110,7 +110,16 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
     disp_drv.ver_res = height;
 
     #ifdef NXDK
-    framebuffer = XVideoGetFB();
+    #define PCRTC_START 0x00600800
+    framebuffer = MmAllocateContiguousMemoryEx(LV_HOR_RES_MAX * LV_VER_RES_MAX * ((LV_COLOR_DEPTH + 7) / 8),
+                                               0x00000000, 0x7FFFFFFF,
+                                               0x1000,
+                                               PAGE_READWRITE |
+                                               PAGE_WRITECOMBINE);
+    assert (framebuffer != NULL);
+    RtlZeroMemory(framebuffer, LV_HOR_RES_MAX * LV_VER_RES_MAX * ((LV_COLOR_DEPTH + 7) / 8));
+    XVideoFlushFB();
+    VIDEOREG(PCRTC_START) = (unsigned int)MmGetPhysicalAddress(framebuffer);
     #else
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
         printf("SDL_InitSubSystem failed: %s\n", SDL_GetError());
@@ -136,7 +145,10 @@ lv_disp_t *lv_sdl_init_display(const char *win_name, int width, int height)
 
 void lv_sdl_deinit_display(void)
 {
-    #ifndef NXDK
+    #ifdef NXDK
+    XVideoFlushFB();
+    MmFreeContiguousMemory(framebuffer);
+    #else
     lv_task_del(sdl_present_task);
     SDL_DestroyTexture(framebuffer);
     SDL_DestroyRenderer(renderer);
