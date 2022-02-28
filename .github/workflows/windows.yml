@@ -34,7 +34,7 @@ jobs:
         cd example/
         mkdir build
         cd build
-        copy C:/msys64/mingw64/bin/SDL2.dll SDL2.dll
+        cp C:/msys64/mingw64/bin/SDL2.dll SDL2.dll
         cmake .. -G "MinGW Makefiles"
         cmake --build .
         ls
