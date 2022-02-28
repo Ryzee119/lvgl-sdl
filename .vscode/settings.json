@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "lv_conf.h": "c",
+        "lv_draw_sdl.h": "c"
+    }
+}
