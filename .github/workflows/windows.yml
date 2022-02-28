@@ -34,7 +34,6 @@ jobs:
         cd example/
         mkdir build
         cd build
-        cp C:/msys64/mingw64/bin/SDL2.dll SDL2.dll
         cmake .. -G "MinGW Makefiles"
         cmake --build .
         ls
@@ -47,4 +46,3 @@ jobs:
         name: lvgl_example_winx86_64
         path: |
           example/build/lvgl_example.exe
-          example/build/SDL2.dll
