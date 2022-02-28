@@ -87,8 +87,20 @@
  *It removes the need to manually update the tick with `lv_tick_inc()`)*/
 #define LV_TICK_CUSTOM 1
 #if LV_TICK_CUSTOM
+#ifdef WIN32
     #define LV_TICK_CUSTOM_INCLUDE "windows.h"         /*Header for the system time function*/
     #define LV_TICK_CUSTOM_SYS_TIME_EXPR (GetTickCount())    /*Expression evaluating to current system time in ms*/
+#else
+    #include <time.h>
+    static inline uint64_t GetTickCountMs()
+    {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return (uint64_t)(ts.tv_nsec / 1000000) + ((uint64_t)ts.tv_sec * 1000ull);
+    }
+    #define LV_TICK_CUSTOM_INCLUDE "time.h"
+    #define LV_TICK_CUSTOM_SYS_TIME_EXPR (GetTickCountMs())
+#endif
 #endif   /*LV_TICK_CUSTOM*/
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
