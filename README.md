@@ -5,7 +5,7 @@ A crossplatform SDL wrapper for the Light and Versatile Graphics Library https:/
 * SDL2 video backend.
 * SDL gamecontroller and keyboard input driver.
 * Filesystem driver uses `stdio.h` for file access.
-* Supports directory listings with `windows.h` winapi for Windows, and `dirent.h` for Linux.
+* Supports directory listings with winapi for Windows, and posix for Linux.
 * Cross platform. Currently supports Windows, Linux and Original Xbox!
 
 # Include in your project
@@ -13,7 +13,7 @@ In your git repo:
 * `git submodule add https://github.com/Ryzee119/lvgl-sdl.git`
 * `cd lvgl-sdl && git submodule init && git submodule update`
 * See the example [CMakeLists.txt](./example/CMakeLists.txt) for the required directories to include in your build system.
-* Copy `lv_conf.h` from `example/` folder *next* to the lvgl-sdl directory in your project.
+* Copy `lv_conf.h` from `lvgl-sdl` folder and place it into your project. Configure CMakeList/Makefile to set LV_CONF_PATH to point to your `lv_conf.h
 * See the [example](./example/example.c) for usage and required initialisation functions etc.
 
 # Or build the examples
@@ -28,7 +28,7 @@ cd example/
 mkdir build
 cd build
 cmake ..
-make
+cmake --build .
 ./lvgl_example
 ```
 
@@ -49,13 +49,11 @@ cmake --build .
 ## Build (Original Xbox)
 Setup and install [nxdk](https://github.com/XboxDev/nxdk/).
 ```
+Run the activate script in nxdk/bin
 cd example/
-make -f Makefile.nxdk NXDK_DIR=/path/to/nxdk
+make -f Makefile.nxdk
 ```
 
 ## Images
 ![example1](./images/example1.png)
 
-![example2](./images/example2.png)
-
-![example3](./images/example3.png)

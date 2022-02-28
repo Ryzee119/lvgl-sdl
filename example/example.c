@@ -1,174 +1,224 @@
-/* MIT License
- * 
- * Copyright (c) [2020] [Ryan Wendland]
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+/**
+ * @file lv_demo_keypad_encoder.c
+ *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "lv_conf.h"
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
-#include "lv_examples.h"
-#include "lv_sdl_drv_display.h"
-#include "lv_sdl_drv_input.h"
-#include "lv_if_drv_filesystem.h"
-#include "input_test.h"
+#include "example.h"
 
-#ifdef NXDK
-#include <hal/video.h>
-#include <hal/debug.h>
-#include <windows.h>
-#define printf(fmt, ...) debugPrint(fmt, __VA_ARGS__)
-#endif
+#if LV_USE_DEMO_KEYPAD_AND_ENCODER || 1
 
-#if (LV_USE_FILESYSTEM == 1)
-const char *fs_id = "0:";
-#ifdef NXDK
-const char *dir_path = "D:\\";
-#else
-const char *dir_path = "./";
-#endif
-#endif
+/*********************
+ *      DEFINES
+ *********************/
 
-static int width = 640;
-static int height = 480;
+/**********************
+ *      TYPEDEFS
+ **********************/
 
-void lv_demo_filesystem(void);
+/**********************
+ *  STATIC PROTOTYPES
+ **********************/
+static void selectors_create(lv_obj_t * parent);
+static void text_input_create(lv_obj_t * parent);
+static void msgbox_create(void);
 
-int main(void)
+static void msgbox_event_cb(lv_event_t * e);
+static void ta_event_cb(lv_event_t * e);
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
+static lv_group_t * g;
+static lv_obj_t * tv;
+static lv_obj_t * t1;
+static lv_obj_t * t2;
+
+/**********************
+ *      MACROS
+ **********************/
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
+
+void lv_demo_keypad_encoder(void)
 {
-    #ifdef NXDK
-    XVideoSetMode(width, height, LV_COLOR_DEPTH, REFRESH_DEFAULT);
-    #endif
+    g = lv_group_create();
+    lv_group_set_default(g);
 
-    lv_init();
-    lv_sdl_init_display("My lvgl example", width, height);
-    lv_sdl_init_input();
+    lv_indev_t * cur_drv = NULL;
+    for(;;) {
+        cur_drv = lv_indev_get_next(cur_drv);
+        if(!cur_drv) {
+            break;
+        }
 
-#if (LV_USE_DEMO_FILESYSTEM == 1)
-    #if (LV_USE_FILESYSTEM == 0)
-    #error "You must enable LV_USE_FILESYSTEM to use LV_USE_DEMO_FILESYSTEM"
-    #else
-    lv_if_init_filesystem(fs_id);
-    lv_demo_filesystem();
-    #endif
-#endif
+        if(cur_drv->driver->type == LV_INDEV_TYPE_KEYPAD) {
+            lv_indev_set_group(cur_drv, g);
+        }
 
-    printf("Starting demo...\n");
-#if (LV_USE_DEMO_BENCHMARK == 1)
-    lv_demo_benchmark();
-#elif (LV_USE_DEMO_STRESS == 1)
-    lv_demo_stress();
-#elif (LV_USE_DEMO_INPUT == 1)
-    lv_demo_sdl_input();
-#endif
-
-    while (!get_quit_event())
-    {
-        lv_task_handler();
+        if(cur_drv->driver->type == LV_INDEV_TYPE_ENCODER) {
+            lv_indev_set_group(cur_drv, g);
+        }
     }
 
-    printf("Freeing resources and quitting\n");
-    lv_sdl_deinit_input();
-    lv_sdl_deinit_display();
-#if (LV_USE_DEMO_FILESYSTEM == 1)
-    lv_if_deinit_filesystem(fs_id);
-#endif
-    lv_deinit();
-    return 0;
+    tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, LV_DPI_DEF / 3);
+
+    t1 = lv_tabview_add_tab(tv, "Selectors");
+    t2 = lv_tabview_add_tab(tv, "Text input");
+
+    selectors_create(t1);
+    text_input_create(t2);
+
+    msgbox_create();
 }
 
-#if (LV_USE_DEMO_FILESYSTEM == 1 && LV_USE_FILESYSTEM == 1)
-//All file paths must be prefixed by the fs_id so the fs knows what driver to use
-static char *create_path(const char* fs_id, const char *path)
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+
+static void selectors_create(lv_obj_t * parent)
 {
-    static char full_path[256];
-    snprintf(full_path, sizeof(full_path), "%s%s", fs_id, path);
-    return full_path;
-}
+    lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(parent, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-void lv_demo_filesystem(void)
-{
+    lv_obj_t * obj;
 
-    //Open a directory (Must use relate path)
-    lv_fs_dir_t dir_p;
-    lv_fs_dir_open(&dir_p, create_path(fs_id, dir_path));
-    char fname[256];
+    obj = lv_table_create(parent);
+    lv_table_set_cell_value(obj, 0, 0, "00");
+    lv_table_set_cell_value(obj, 0, 1, "01");
+    lv_table_set_cell_value(obj, 1, 0, "10");
+    lv_table_set_cell_value(obj, 1, 1, "11");
+    lv_table_set_cell_value(obj, 2, 0, "20");
+    lv_table_set_cell_value(obj, 2, 1, "21");
+    lv_table_set_cell_value(obj, 3, 0, "30");
+    lv_table_set_cell_value(obj, 3, 1, "31");
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 
-    //Test directory listing
-    //Read all files/folders in a directory and print them
-    printf("*** Listing all files in \"%s\" ***\n", create_path(fs_id, dir_path));
-    while (lv_fs_dir_read(&dir_p, fname) == LV_FS_RES_OK)
-    {
-        printf("%s\n", fname);
+    obj = lv_calendar_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_btnmatrix_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_checkbox_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_slider_create(parent);
+    lv_slider_set_range(obj, 0, 10);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_switch_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_spinbox_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_dropdown_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    obj = lv_roller_create(parent);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+
+    lv_obj_t * list = lv_list_create(parent);
+    lv_obj_update_layout(list);
+    if(lv_obj_get_height(list) > lv_obj_get_content_height(parent)) {
+        lv_obj_set_height(list, lv_obj_get_content_height(parent));
     }
-    printf("\n\n");
 
-    //Test writing a file, then reading the data back
-    lv_fs_file_t file_p;
-    const char *TEST_FILE = "my_test_file.txt"; //Need to prefix all with the fs_id
-    const char *TEST_STRING = "Hello this is my lvgl project!\n";
-    char readback_buf[256] = {0};
-    uint32_t bytes_written = 0;
-    uint32_t bytes_read = 0;
-    do
-    {
-        printf("*** Testing write and readback to \"%s\" ***\n", TEST_FILE);
-        //Create a new file, (overwrite if already exists)
-        if (lv_fs_open(&file_p, create_path(fs_id, TEST_FILE), LV_FS_MODE_WR) != LV_FS_RES_OK)
-            break;
-
-        if (lv_fs_write(&file_p, TEST_STRING, strlen(TEST_STRING) + 1, &bytes_written) != LV_FS_RES_OK)
-            break;
-
-        //Close the file
-        lv_fs_close(&file_p);
-
-        //Now let's read back what we just wrote
-        if (lv_fs_open(&file_p, create_path(fs_id, TEST_FILE), LV_FS_MODE_RD) != LV_FS_RES_OK)
-            break;
-
-        //Reading some data into buf
-        lv_fs_read(&file_p, readback_buf, strlen(TEST_STRING), &bytes_read);
-
-        //Close the file
-        lv_fs_close(&file_p);
-
-        //Print the data we just read
-        printf("%s", readback_buf);
-    } while (0);
-
-    if (bytes_written == strlen(TEST_STRING))
-        printf("WRITE SUCCESSFUL\n");
-    else
-        printf("WRITE FAILED\n");
-    
-    if (strcmp(readback_buf, TEST_STRING) == 0)
-        printf("READBACK SUCCESSFUL\n");
-    else
-        printf("READBACK FAILED\n");
-
-    #ifdef NXDK
-    Sleep(2000);
-    #endif
-
-    lv_fs_dir_close(&dir_p);
+    lv_list_add_btn(list, LV_SYMBOL_OK, "Apply");
+    lv_list_add_btn(list, LV_SYMBOL_CLOSE, "Close");
+    lv_list_add_btn(list, LV_SYMBOL_EYE_OPEN, "Show");
+    lv_list_add_btn(list, LV_SYMBOL_EYE_CLOSE, "Hide");
+    lv_list_add_btn(list, LV_SYMBOL_TRASH, "Delete");
+    lv_list_add_btn(list, LV_SYMBOL_COPY, "Copy");
+    lv_list_add_btn(list, LV_SYMBOL_PASTE, "Paste");
 }
+
+static void text_input_create(lv_obj_t * parent)
+{
+    lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_COLUMN);
+
+    lv_obj_t * ta1 = lv_textarea_create(parent);
+    lv_obj_set_width(ta1, LV_PCT(100));
+    lv_textarea_set_one_line(ta1, true);
+    lv_textarea_set_placeholder_text(ta1, "Click with an encoder to show a keyboard");
+
+    lv_obj_t * ta2 = lv_textarea_create(parent);
+    lv_obj_set_width(ta2, LV_PCT(100));
+    lv_textarea_set_one_line(ta2, true);
+    lv_textarea_set_placeholder_text(ta2, "Type something");
+
+    lv_obj_t * kb = lv_keyboard_create(lv_scr_act());
+    lv_obj_add_flag(kb, LV_OBJ_FLAG_HIDDEN);
+
+    lv_obj_add_event_cb(ta1, ta_event_cb, LV_EVENT_ALL, kb);
+    lv_obj_add_event_cb(ta2, ta_event_cb, LV_EVENT_ALL, kb);
+}
+
+static void msgbox_create(void)
+{
+    static const char * btns[] = {"Ok", "Cancel", ""};
+    lv_obj_t * mbox = lv_msgbox_create(NULL, "Hi", "Welcome to the keyboard and encoder demo", btns, false);
+    lv_obj_add_event_cb(mbox, msgbox_event_cb, LV_EVENT_ALL, NULL);
+    lv_group_focus_obj(lv_msgbox_get_btns(mbox));
+    lv_obj_add_state(lv_msgbox_get_btns(mbox), LV_STATE_FOCUS_KEY);
+#if LV_EX_MOUSEWHEEL
+    lv_group_set_editing(g, true);
+#endif
+    lv_group_focus_freeze(g, true);
+
+    lv_obj_align(mbox, LV_ALIGN_CENTER, 0, 0);
+
+    lv_obj_t * bg = lv_obj_get_parent(mbox);
+    lv_obj_set_style_bg_opa(bg, LV_OPA_70, 0);
+    lv_obj_set_style_bg_color(bg, lv_palette_main(LV_PALETTE_GREY), 0);
+}
+
+static void msgbox_event_cb(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * msgbox = lv_event_get_current_target(e);
+
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        const char * txt = lv_msgbox_get_active_btn_text(msgbox);
+        if(txt) {
+            lv_msgbox_close(msgbox);
+            lv_group_focus_freeze(g, false);
+            lv_group_focus_obj(lv_obj_get_child(t1, 0));
+            lv_obj_scroll_to(t1, 0, 0, LV_ANIM_OFF);
+
+        }
+    }
+}
+
+static void ta_event_cb(lv_event_t * e)
+{
+    lv_indev_t * indev = lv_indev_get_act();
+    if(indev == NULL) return;
+    lv_indev_type_t indev_type = lv_indev_get_type(indev);
+
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * ta = lv_event_get_target(e);
+    lv_obj_t * kb = lv_event_get_user_data(e);
+
+    if(code == LV_EVENT_CLICKED && indev_type == LV_INDEV_TYPE_ENCODER) {
+        lv_keyboard_set_textarea(kb, ta);
+        lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);
+        lv_group_focus_obj(kb);
+        lv_group_set_editing(lv_obj_get_group(kb), kb);
+        lv_obj_set_height(tv, LV_VER_RES / 2);
+        lv_obj_align(kb, LV_ALIGN_BOTTOM_MID, 0, 0);
+    }
+
+    if(code == LV_EVENT_READY || code == LV_EVENT_CANCEL) {
+        lv_obj_add_flag(kb, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_height(tv, LV_VER_RES);
+    }
+}
+
 #endif

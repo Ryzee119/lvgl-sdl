@@ -1,44 +1,28 @@
-XBE_TITLE = lvgl-xbox
+XBE_TITLE = lv_demo
 GEN_XISO = $(XBE_TITLE).iso
 NXDK_SDL = y
 
-#Include my files
+# Edit these for your project
+LVGL_DIR = ../lvgl
+LVGL_DRV_DIR = ../lvgl_drv
+LV_CONF_PATH = "../lv_conf.h"
+
+# Edit these for your project
 SRCS += \
-	$(CURDIR)/example.c \
-	$(CURDIR)/input_test.c \
-	$(CURDIR)/../lv_drv/lv_sdl_drv_input.c \
-	$(CURDIR)/../lv_drv/lv_sdl_drv_display.c \
-	$(CURDIR)/../lv_drv/lv_if_drv_filesystem.c
-CFLAGS += \
-	-I$(CURDIR) \
-	-I$(CURDIR)/../ \
-	-I$(CURDIR)/../lv_drv \
-	-O2 \
-	-DMAKE_EXAMPLE
+	main.c \
+	example.c
 
-#Include lvgl main library
-SRCS +=	\
-	$(wildcard $(CURDIR)/../lvgl/src/lv_core/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_draw/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_font/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_gpu/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_hal/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_misc/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_themes/*.c) \
-	$(wildcard $(CURDIR)/../lvgl/src/lv_widgets/*.c)
-CFLAGS += \
-	-I$(CURDIR)/../lvgl/src \
+CFLAGS += -I$(CURDIR) -O2 -DWIN32 -DLV_LVGL_H_INCLUDE_SIMPLE -DLV_CONF_PATH=$(LV_CONF_PATH)
 
-#Include lv_examples
+
+include $(LVGL_DIR)/lvgl.mk
 SRCS +=	\
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_benchmark/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_stress/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_widgets/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_ex_get_started/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_ex_style/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/src/lv_demo_ex_widgets/*.c) \
-	$(wildcard $(CURDIR)/lv_examples/assets/*.c)
+	$(wildcard $(LVGL_DRV_DIR)/*.c) \
+	$(wildcard assets/*.c) \
+	$(CSRCS)
 CFLAGS += \
-	-I$(CURDIR)/lv_examples
+	-I$(LVGL_DIR)/ \
+	-I$(LVGL_DIR)/src/ \
+	-I$(LVGL_DRV_DIR)/ \
 
 include $(NXDK_DIR)/Makefile
