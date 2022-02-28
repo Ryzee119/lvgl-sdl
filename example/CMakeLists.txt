@@ -8,7 +8,7 @@ pkg_check_modules(SDL2 REQUIRED sdl2)
 set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
 set(LVGL_DIR "${PROJECT_DIR}/../lvgl")
 set(LVDRV_DIR "${PROJECT_DIR}/../lvgl_drv")
-set(LV_CONF_PATH ${PROJECT_DIR}/../lv_conf.h)
+set(LV_CONF_PATH ${PROJECT_DIR}/../lv_conf.h CACHE STRING "" FORCE)
 
 project(lvgl_example LANGUAGES C CXX)
 
