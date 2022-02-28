@@ -21,7 +21,7 @@ jobs:
         Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
         7z x -y sdl2.tar.gz
         7z x -y sdl2.tar "-oC:/tools/"
-        pacman -S mingw-w64-x86_64-SDL2
+        export PKG_CONFIG_PATH=C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/lib/pkgconfig
 
     - name: Compile
       run: |
