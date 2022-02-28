@@ -22,7 +22,7 @@ jobs:
         7z x -y sdl2.tar.gz
         7z x -y sdl2.tar "-oC:/tools/"
         SET PKG_CONFIG_PATH=C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/lib/pkgconfig
-        SET PATH=%PATH%;C:/mysys64/mingw64/bin
+        echo "C:/mysys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Compile
       run: |
