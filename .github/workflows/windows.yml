@@ -29,7 +29,7 @@ jobs:
         mkdir build
         cd build
         copy C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/bin/SDL2.dll SDL2.dll
-        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
+        cmake ..
         cmake --build .
         ls
 
