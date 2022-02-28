@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
+project(lvgl_example)
+
 find_package(PkgConfig)
 pkg_check_modules(SDL2 REQUIRED sdl2)
 
