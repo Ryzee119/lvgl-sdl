@@ -9,26 +9,32 @@ on:
 jobs:
   Windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
       with:
         submodules: true
+        
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
 
     - name: Install and Setup Dependencies 
       run: |
-        Invoke-WebRequest -Uri "https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz" -OutFile "sdl2.tar.gz"
-        7z x -y sdl2.tar.gz
-        7z x -y sdl2.tar "-oC:/tools/"
+        pacman -S mingw-w64-x86_64-make --noconfirm
+        pacman -S mingw-w64-x86_64-cmake --noconfirm
+        pacman -S mingw-w64-x86_64-gcc --noconfirm
+        pacman -S mingw-w64-x86_64-SDL2 --noconfirm
 
     - name: Compile
       run: |
         cd example/
         mkdir build
         cd build
-        copy C:/tools/SDL2-2.0.12/x86_64-w64-mingw32/bin/SDL2.dll SDL2.dll
-        cmake .. -DSDL2_PATH="C:/tools/SDL2-2.0.12/x86_64-w64-mingw32" -G "MinGW Makefiles"
+        cmake .. -G "MinGW Makefiles"
         cmake --build .
         ls
 
@@ -40,4 +46,3 @@ jobs:
         name: lvgl_example_winx86_64
         path: |
           example/build/lvgl_example.exe
-          example/build/SDL2.dll
