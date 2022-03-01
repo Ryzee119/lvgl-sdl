@@ -1,4 +1,4 @@
-XBE_TITLE = lv_demo
+XBE_TITLE = lvgl_demo
 GEN_XISO = $(XBE_TITLE).iso
 NXDK_SDL = y
 
@@ -12,9 +12,10 @@ SRCS += \
 	main.c \
 	example.c
 
-CFLAGS += -I$(CURDIR) -O2 -DWIN32 -DLV_LVGL_H_INCLUDE_SIMPLE -DLV_CONF_PATH=$(LV_CONF_PATH)
+# Edit these for your project
+CFLAGS += -I$(CURDIR) -O2 
 
-
+# Include LVGL main library
 include $(LVGL_DIR)/lvgl.mk
 SRCS +=	\
 	$(wildcard $(LVGL_DRV_DIR)/*.c) \
@@ -24,5 +25,6 @@ CFLAGS += \
 	-I$(LVGL_DIR)/ \
 	-I$(LVGL_DIR)/src/ \
 	-I$(LVGL_DRV_DIR)/ \
+	-DWIN32 -DLV_LVGL_H_INCLUDE_SIMPLE -DLV_CONF_PATH=$(LV_CONF_PATH)
 
 include $(NXDK_DIR)/Makefile
