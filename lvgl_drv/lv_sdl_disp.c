@@ -2,7 +2,7 @@
 
 #ifndef NXDK
 #include <assert.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "src/draw/sdl/lv_draw_sdl.h"
 #include "lv_port_disp.h"
 #include "lvgl.h"
