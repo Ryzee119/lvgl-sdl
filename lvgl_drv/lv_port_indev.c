@@ -1,6 +1,10 @@
 //SPDX-License-Identifier: MIT
 
+#ifdef NXDK
 #include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 #include "lv_port_indev.h"
 #include "lvgl.h"
 
