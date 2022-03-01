@@ -34,4 +34,4 @@ target_include_directories(lvgl_example PUBLIC ${SDL2_INCLUDE_DIRS})
 target_compile_options(lvgl_example PUBLIC ${SDL2_CFLAGS_OTHER})
 target_link_libraries(lvgl_example ${SDL2_LIBRARIES})
 
-target_link_libraries(lvgl_example lvgl::lvgl)
+target_link_libraries(lvgl_example lvgl::lvgl SDL2)
