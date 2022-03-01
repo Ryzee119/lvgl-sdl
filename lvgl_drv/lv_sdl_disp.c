@@ -46,7 +46,11 @@ void lv_port_disp_init(int width, int height)
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                               DISPLAY_WIDTH, DISPLAY_HEIGHT, 0);
 
+#ifdef SDL_USE_SW_RENDERER
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+#else
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+#endif
 
     texture = SDL_CreateTexture(renderer,
                                 (LV_COLOR_DEPTH == 32) ? (SDL_PIXELFORMAT_ARGB8888) : (SDL_PIXELFORMAT_RGB565),
