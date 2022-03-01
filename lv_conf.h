@@ -192,7 +192,7 @@
 #define LV_USE_GPU_NXP_VG_LITE 0
 
 /*Use SDL renderer API*/
-#ifndef NXDk
+#ifndef NXDK
 #define LV_USE_GPU_SDL 1
 #if LV_USE_GPU_SDL
     #define LV_GPU_SDL_INCLUDE_PATH <SDL2/SDL.h>
