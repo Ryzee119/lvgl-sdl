@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(PROJECT_NAME lvgl_example)
-
-project(${PROJECT_NAME} LANGUAGES C CXX)
+project(lvgl_example LANGUAGES C CXX)
 
 find_package(PkgConfig)
 pkg_check_modules(SDL2 REQUIRED sdl2)
@@ -19,7 +17,7 @@ file(GLOB LVGL_DRIVER_FILES
     "${LVDRV_DIR}/lv_port_indev.c"
 )
 
-add_executable(${PROJECT_NAME} ${LVGL_DRIVER_FILES})
+add_executable(lvgl_example ${LVGL_DRIVER_FILES})
 
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
 
@@ -29,7 +27,7 @@ include_directories(${PROJECT_DIR})
 
 include(${LVGL_DIR}/CMakeLists.txt)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
-target_compile_options(${PROJECT_NAME} PUBLIC ${SDL2_CFLAGS_OTHER})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} lvgl::lvgl SDL2)
+target_include_directories(lvgl_example PUBLIC ${SDL2_INCLUDE_DIRS})
+target_compile_options(lvgl_example PUBLIC ${SDL2_CFLAGS_OTHER})
+target_link_libraries(lvgl_example ${SDL2_LIBRARIES})
+target_link_libraries(lvgl_example lvgl::lvgl SDL2)
