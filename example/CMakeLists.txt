@@ -9,15 +9,13 @@ set(PROJECT_DIR "${CMAKE_SOURCE_DIR}")
 set(LVGL_DIR "${PROJECT_DIR}/../lvgl")
 set(LVDRV_DIR "${PROJECT_DIR}/../lvgl_drv")
 set(LV_CONF_PATH ${PROJECT_DIR}/../lv_conf.h CACHE STRING "" FORCE)
-file(GLOB LVGL_DRIVER_FILES
+file(GLOB PROJECT_FILES
     "${PROJECT_DIR}/main.c"
     "${PROJECT_DIR}/example.c"
     "${PROJECT_DIR}/assets/*.c"
-    "${LVDRV_DIR}/lv_sdl_disp.c"
-    "${LVDRV_DIR}/lv_port_indev.c"
 )
 
-add_executable(lvgl_example ${LVGL_DRIVER_FILES})
+add_executable(lvgl_example ${LVDRV_DIR}/lv_sdl_disp.c ${LVDRV_DIR}/lv_port_indev.c ${PROJECT_FILES})
 
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
 
