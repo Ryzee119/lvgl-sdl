@@ -18,6 +18,7 @@ file(GLOB PROJECT_FILES
 add_executable(lvgl_example ${LVDRV_DIR}/lv_sdl_disp.c ${LVDRV_DIR}/lv_port_indev.c ${PROJECT_FILES})
 
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
+add_definitions(-DLV_CONF_PATH=${LV_CONF_PATH})
 
 include_directories(${LVGL_DIR})
 include_directories(${LVDRV_DIR})
