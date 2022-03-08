@@ -18,6 +18,12 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "lvgl.h"
+#include "lvgl.h"
+#ifdef NXDK
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 /*********************
  *      DEFINES
