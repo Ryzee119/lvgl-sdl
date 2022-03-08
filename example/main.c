@@ -28,7 +28,7 @@ static char *make_path(const char *path)
     return _path;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
     lv_init();
     lv_log_register_print_cb(_log_cb);
