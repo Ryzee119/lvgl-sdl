@@ -26,7 +26,18 @@ extern "C" {
 /**********************
  *      TYPEDEFS
  **********************/
+typedef struct
+{
+    SDL_GameControllerButton sdl_map;
+    lv_key_t lvgl_map;
+} gamecontroller_map_t;
 
+typedef struct
+{
+    SDL_Keycode sdl_map;
+    lv_key_t lvgl_map;
+} keyboard_map_t;
+ 
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
