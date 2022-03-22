@@ -18,7 +18,8 @@ CFLAGS += -I$(CURDIR) -O2
 # Include LVGL main library
 include $(LVGL_DIR)/lvgl.mk
 SRCS +=	\
-	$(wildcard $(LVGL_DRV_DIR)/*.c) \
+	$(LVGL_DRV_DIR)/lv_port_indev.c) \
+	$(LVGL_DRV_DIR)/lv_xbox_disp.c) \
 	$(wildcard assets/*.c) \
 	$(CSRCS)
 CFLAGS += \
