@@ -5,11 +5,11 @@
 #include "example.h"
 
 #ifdef NXDK
-#define ROOT_PATH "D:\\"
-#define TEST_FILE "D:\\text.txt"
+#define ROOT_PATH "A:D:"
+#define TEST_FILE "A:D:\\text.txt"
 #else
-#define ROOT_PATH "."
-#define TEST_FILE "text.txt"
+#define ROOT_PATH "A:."
+#define TEST_FILE "A:text.txt"
 #endif
 
 #include <stdio.h>
@@ -17,15 +17,6 @@ void _log_cb(const char *buf)
 {
     printf("%s", buf);
     fflush(stdout);
-}
-
-// lvgl expects paths to be prefixed with a character ID to manage multiple FS drivers.
-// ie. "A:myfile.txt". This adds that.
-static char *make_path(const char *path)
-{
-    static char _path[256];
-    snprintf(_path, sizeof(path), "%c:%s", LV_FS_STDIO_LETTER, path);
-    return _path;
 }
 
 int main(int argc, char *argv[])
@@ -38,7 +29,7 @@ int main(int argc, char *argv[])
 
     lv_fs_dir_t dir;
     lv_log("Listing files and folders with the executable folder\n");
-    if (lv_fs_dir_open(&dir, make_path(ROOT_PATH)) == LV_FS_RES_OK)
+    if (lv_fs_dir_open(&dir, ROOT_PATH) == LV_FS_RES_OK)
     {
         char fname[256];
         while (lv_fs_dir_read(&dir, fname) == LV_FS_RES_OK)
@@ -47,7 +38,7 @@ int main(int argc, char *argv[])
             {
                 break;
             }
-            lv_log(fname);
+            lv_log("%s", fname);
             lv_log("\n");
         }
         lv_log("\n");
@@ -64,7 +55,7 @@ int main(int argc, char *argv[])
         const char *test_string = "hello world!\n";
         char read_back[256] = {0};
         uint32_t brw;
-        if (lv_fs_open(&file, make_path(TEST_FILE), LV_FS_MODE_WR) != LV_FS_RES_OK)
+        if (lv_fs_open(&file, TEST_FILE, LV_FS_MODE_WR) != LV_FS_RES_OK)
         {
             lv_log("Could not open file for write\n");
             break;
@@ -78,7 +69,7 @@ int main(int argc, char *argv[])
 
         lv_fs_close(&file);
 
-        if (lv_fs_open(&file, make_path(TEST_FILE), LV_FS_MODE_RD) != LV_FS_RES_OK)
+        if (lv_fs_open(&file, TEST_FILE, LV_FS_MODE_RD) != LV_FS_RES_OK)
         {
             lv_log("Could not open file for read\n");
             break;
@@ -91,16 +82,16 @@ int main(int argc, char *argv[])
         }
 
         lv_log("Wrote: ");
-        lv_log(test_string);
+        lv_log("%s", test_string);
         lv_log("\n");
         lv_log("Read back: ");
-        lv_log(read_back);
+        lv_log("%s", read_back);
         lv_log("\n");
     } while (0);
 
     lv_demo_keypad_encoder();
 
-    while (!lv_quit_event())
+    while (lv_get_quit() == LV_QUIT_NONE)
     {
         lv_task_handler();
     }
