@@ -1,6 +1,5 @@
 //SPDX-License-Identifier: MIT
 
-#ifndef NXDK
 #include <assert.h>
 #include <SDL.h>
 #include "lv_port_disp.h"
@@ -74,4 +73,3 @@ void lv_port_disp_deinit()
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-#endif
