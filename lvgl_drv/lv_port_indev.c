@@ -15,7 +15,7 @@ static lv_indev_t *indev_keypad;
 static lv_obj_t *mouse_cursor;
 static SDL_GameController *pad = NULL;
 static int mouse_x, mouse_y;
-static bool quit_event = false;
+static lv_quit_event_t quit_event = LV_QUIT_NONE;
 static bool mouse_event = false;
 static bool mouse_pressed = false;
 #ifndef MOUSE_SENSITIVITY
@@ -65,9 +65,14 @@ static keyboard_map_t lvgl_keyboard_map[] =
 extern keyboard_map_t lvgl_keyboard_map[];
 #endif
 
-bool lv_quit_event()
+lv_quit_event_t lv_get_quit()
 {
     return quit_event;
+}
+
+void lv_set_quit(lv_quit_event_t event)
+{
+    quit_event = event;
 }
 
 static void mouse_read(lv_indev_drv_t *indev_drv_gamepad, lv_indev_data_t *data)

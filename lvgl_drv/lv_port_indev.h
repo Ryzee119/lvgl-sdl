@@ -28,7 +28,14 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-
+typedef enum
+{
+    LV_QUIT_NONE,
+    LV_REBOOT,
+    LV_SHUTDOWN,
+    LV_QUIT,
+    LV_QUIT_OTHER,
+} lv_quit_event_t;
 /**********************
  *      TYPEDEFS
  **********************/
@@ -49,7 +56,8 @@ typedef struct
  **********************/
 void lv_port_indev_init(bool use_mouse_cursor);
 void lv_port_indev_deinit(void);
-bool lv_quit_event();
+void lv_set_quit(lv_quit_event_t event);
+lv_quit_event_t lv_get_quit(void);
 /**********************
  *      MACROS
  **********************/
