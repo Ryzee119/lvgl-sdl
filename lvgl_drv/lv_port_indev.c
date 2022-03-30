@@ -182,6 +182,42 @@ static void keypad_read(lv_indev_drv_t *indev_drv_gamepad, lv_indev_data_t *data
             data->state = (e.type == SDL_CONTROLLERBUTTONDOWN) ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
         }
 
+        if (e.type == SDL_CONTROLLERAXISMOTION && e.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT)
+        {
+            static bool pressed = 0;
+            data->key = 'L';
+            if (e.caxis.value > 0x20 && pressed == 0)
+            {
+                data->key = 'L';
+                data->state = LV_INDEV_STATE_PRESSED;
+                pressed = 1;
+            }
+            else if (e.caxis.value < 0x10 && pressed == 1)
+            {
+                data->key = 'L';
+                data->state = LV_INDEV_STATE_RELEASED;
+                pressed = 0;
+            }
+        }
+
+        if (e.type == SDL_CONTROLLERAXISMOTION && e.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+        {
+            static bool pressed = 0;
+            data->key = 'R';
+            if (e.caxis.value > 0x20 && pressed == 0)
+            {
+                data->key = 'R';
+                data->state = LV_INDEV_STATE_PRESSED;
+                pressed = 1;
+            }
+            else if (e.caxis.value < 0x10 && pressed == 1)
+            {
+                data->key = 'R';
+                data->state = LV_INDEV_STATE_RELEASED;
+                pressed = 0;
+            }
+        }
+
         // Handle keyboard button events
         if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
         {
