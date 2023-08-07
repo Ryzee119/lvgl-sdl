@@ -64,6 +64,10 @@ void lv_demo_keypad_encoder(void)
         if(cur_drv->driver->type == LV_INDEV_TYPE_ENCODER) {
             lv_indev_set_group(cur_drv, g);
         }
+
+        if(cur_drv->driver->type == LV_INDEV_TYPE_POINTER) {
+            lv_indev_set_group(cur_drv, g);
+        }
     }
 
     tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, LV_DPI_DEF / 3);
@@ -206,7 +210,7 @@ static void ta_event_cb(lv_event_t * e)
     lv_obj_t * ta = lv_event_get_target(e);
     lv_obj_t * kb = lv_event_get_user_data(e);
 
-    if(code == LV_EVENT_CLICKED && indev_type == LV_INDEV_TYPE_ENCODER) {
+    if(code == LV_EVENT_CLICKED && ((indev_type == LV_INDEV_TYPE_ENCODER)||(indev_type == LV_INDEV_TYPE_POINTER))) {
         lv_keyboard_set_textarea(kb, ta);
         lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);
         lv_group_focus_obj(kb);
